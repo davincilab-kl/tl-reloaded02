@@ -1,0 +1,162 @@
+/* Impersonation-Leiste - Fixiert am unteren Bildschirmrand */
+.impersonation-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background: linear-gradient(124deg, #FDB600, #df8c00);
+    color: #262626;
+    padding: 12px 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+/* Ausgeblendeter Zustand - nach unten verschoben */
+.impersonation-bar.collapsed {
+    transform: translateY(100%);
+}
+
+/* Toggle-Button (Lesezeichen-Stil) */
+.impersonation-toggle-btn {
+    position: absolute;
+    top: -35px;
+    right: 20px;
+    width: 57px;
+    height: 35px;
+    background: linear-gradient(124deg, #da9115, #df8c00);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: #262626;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.impersonation-toggle-btn:hover {
+    background: linear-gradient(180deg, #da7015, #d99015);
+    box-shadow: none;
+    transform: translateY(0);
+}
+
+/* Pfeil dreht sich, wenn ausgeblendet */
+.impersonation-bar.collapsed .impersonation-toggle-btn i {
+    transform: rotate(180deg);
+}
+
+.impersonation-bar-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.impersonation-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.impersonation-info i {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.impersonation-text {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.impersonation-text strong {
+    font-weight: 600;
+}
+
+.btn-stop-impersonation {
+    background: rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    color: #262626;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-stop-impersonation:hover {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-stop-impersonation:active {
+    transform: translateY(0);
+}
+
+.btn-stop-impersonation i {
+    font-size: 14px;
+}
+
+/* Padding für Body, damit Inhalt nicht von der Leiste verdeckt wird */
+body:has(.impersonation-bar:not(.collapsed)) {
+    padding-bottom: 60px;
+}
+
+/* Alternative für Browser ohne :has() Support */
+body.impersonation-active:not(.impersonation-collapsed) {
+    padding-bottom: 60px;
+}
+
+/* Wenn ausgeblendet, nur minimales Padding für den Pfeil */
+body:has(.impersonation-bar.collapsed),
+body.impersonation-active.impersonation-collapsed {
+    padding-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .impersonation-bar-content {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .impersonation-info {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .impersonation-text {
+        font-size: 13px;
+    }
+    
+    .btn-stop-impersonation {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    body:has(.impersonation-bar:not(.collapsed)),
+    body.impersonation-active:not(.impersonation-collapsed) {
+        padding-bottom: 100px;
+    }
+    
+    body:has(.impersonation-bar.collapsed),
+    body.impersonation-active.impersonation-collapsed {
+        padding-bottom: 20px;
+    }
+}
+

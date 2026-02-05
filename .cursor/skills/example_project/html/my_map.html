@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schulkarte</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- Geocoder CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+        #map { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 1; 
+            border-radius: 0;
+        }
+        /* Custom marker cluster styling */
+        .marker-cluster {
+            background: transparent !important;
+        }
+        .marker-cluster div {
+            background-color: #4a90e2 !important;
+            color: white !important;
+            border-radius: 50% !important;
+            border: 3px solid white !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+            font-weight: bold !important;
+        }
+        /* Leaflet popup styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .leaflet-popup-content {
+            margin: 16px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        /* Layer control styling */
+        .leaflet-control-layers {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .info-panel {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 28px 28px 18px 28px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 380px;
+            min-width: 280px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .info-panel.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(20px);
+        }
+        .info-panel:hover {
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        .toggle-panel-btn {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 2000;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4a90e2 0%, #357ab8 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .toggle-panel-btn:hover {
+            background: linear-gradient(135deg, #357ab8 0%, #4a90e2 100%);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.5);
+        }
+        .toggle-panel-btn:active {
+            transform: scale(0.95);
+        }
+        .toggle-panel-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        .info-panel.hide ~ .toggle-panel-btn {
+            /* When panel is hidden, show button a bit more prominent */
+            background: #4a90e2;
+        }
+        .info-panel h2 {
+            font-size: 1.25rem;
+            margin: 0 0 12px 0;
+            color: #2a2a3a;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+        .search-group {
+            margin-bottom: 18px;
+        }
+        .search-label {
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 4px;
+            display: block;
+        }
+        #search-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #d0d4e4;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            transition: border 0.2s;
+        }
+        #search-input:focus {
+            border: 1.5px solid #4a90e2;
+            outline: none;
+        }
+        #search-button {
+            width: 100%;
+            padding: 11px 0;
+            background: linear-gradient(135deg, #4a90e2 0%, #357ab8 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+        }
+        #search-button:hover {
+            background: linear-gradient(135deg, #357ab8 0%, #4a90e2 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+        }
+        #search-button:active {
+            transform: translateY(0);
+        }
+        .radius-control {
+            margin-bottom: 18px;
+        }
+        .radius-label {
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 4px;
+            display: block;
+        }
+        #radius-slider {
+            width: 100%;
+            margin-top: 6px;
+        }
+        #radius-value {
+            font-weight: 600;
+            color: #357ab8;
+        }
+        .loading-spinner {
+            display: none;
+            margin: 0 auto 10px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a90e2;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            color: #d32f2f;
+            background: #fff0f0;
+            border: 1px solid #f8d7da;
+            border-radius: 5px;
+            padding: 7px 10px;
+            margin-bottom: 10px;
+            font-size: 0.98rem;
+            display: none;
+        }
+        .school-list {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-top: 10px;
+            background: #f8fafd;
+            border-radius: 7px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            padding: 7px 0 0 0;
+        }
+        .school-item {
+            padding: 10px 14px 10px 14px;
+            border-bottom: 1px solid #e0e4f0;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #2a2a3a;
+            transition: background 0.15s;
+        }
+        .school-item:last-child { border-bottom: none; }
+        .school-item:hover {
+            background-color: #eaf2fb;
+        }
+        .results-count {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #357ab8;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+        const schools = [{"name": "MS6Wels", "type": "Oberösterreich", "address": "Porzellangasse 46, 4600 Wels", "lat": 48.1613402, "lng": 14.0078174}, {"name": "Mittelschule St. Aegidi", "type": "Oberösterreich", "address": "St. Aegidi 62, 4725 St. Aegidi", "lat": 48.4797387, "lng": 13.7368477}, {"name": "BG und BRG Hollabrunn", "type": "Niederösterreich", "address": "Reucklstraße 9, 2020 Hollabrunn", "lat": 48.5584676, "lng": 16.0837366}, {"name": "Private Mittelschule Odilien", "type": "Steiermark", "address": "Leonhardstraße 130, 8010 Graz", "lat": 47.0769473, "lng": 15.4640479}, {"name": "Mittelschule Semriach", "type": "Steiermark", "address": "Schulstraße 25, 8102 Semriach", "lat": 47.2204014, "lng": 15.4051222}, {"name": "MS Ehrenhausen", "type": "Steiermark", "address": "Georgigasse 270, 8461 Ehrenhausen", "lat": 46.7265969, "lng": 15.5821569}, {"name": "Musikmittelschule St. Martin im Innkreis", "type": "Oberösterreich", "address": "Diesseits 180, 4973 Sankt Martin im Innkreis", "lat": 48.2944595, "lng": 13.4403472}, {"name": "Mittelschule Strassburg", "type": "Kärnten", "address": "10.Oktoberstrasse 2, 9341 Strassburg", "lat": 46.8967015, "lng": 14.3362527}, {"name": "Sportmittelschule Steyr", "type": "Oberösterreich", "address": "Taschelried 1, 4400 Steyr", "lat": 48.0512554, "lng": 14.416046}, {"name": "MS Gleisdorf", "type": "Steiermark", "address": "Alois-Groggergasse 12, 8200 Gleisdorf", "lat": 47.10559, "lng": 15.71011}, {"name": "MS Tannheimer Tal", "type": "Tirol", "address": "Kirchacker 10, 6675 Tannheim", "lat": 47.499887, "lng": 10.5186747}, {"name": "Mittelschule Pabneukirchen", "type": "Oberösterreich", "address": "Markt 77, 4363 Pabneukrichen", "lat": 48.29, "lng": 14.13}, {"name": "MS Liezen", "type": "Steiermark", "address": "Kulturhausplatz 3, 8940 Liezen", "lat": 47.5662954, "lng": 14.2418802}, {"name": "Mittelschule St. Veit/Glan", "type": "Kärnten", "address": "Dr. Arthur-Lemisch-Straße 30, 9300 St. Veit/Glan", "lat": 46.772316, "lng": 14.3646865}, {"name": "MS Horn", "type": "Niederösterreich", "address": "Hammerlingstrasse 1, 3580 Horn", "lat": 48.65, "lng": 15.65}, {"name": "MS Irnfritz-Messern", "type": "Niederösterreich", "address": "Hauptstraße 8, 3754 Irnfritz", "lat": 48.7460705, "lng": 15.538183}, {"name": "BG Rein", "type": "Steiermark", "address": "Rein 1, 8103 Gratwein-Straßengel", "lat": 47.1350802, "lng": 15.2843679}, {"name": "Rg/Org antonkriegergasse", "type": "Wien", "address": "Antonkriegergasse 25, 1123 Wien", "lat": 48.1561884, "lng": 16.2634679}, {"name": "Musikmittelschule Eggenburg", "type": "Niederösterreich", "address": "Mozartstraße 10, 3743 Röschitz", "lat": 48.45, "lng": 15.82}, {"name": "SMS2 Waidmsnnsdorf", "type": "Kärnten", "address": "Obirstraße 6, 9020 Klagenfurt am Wörthersee ", "lat": 46.6159978, "lng": 14.2880659}, {"name": "Mittelschule Peter Rosegger Mürzzuschlag", "type": "Steiermark", "address": "Roseggergasse 2, 8680 Mürzzuschlag", "lat": 47.6045365, "lng": 15.6718661}, {"name": "MS Vorderweißenbach", "type": "Oberösterreich", "address": "Müllergasse 2, 4191 Vorderweißenbach", "lat": 48.5529918, "lng": 14.2172573}, {"name": "MS Irdning", "type": "Steiermark", "address": "Lindenallee 38, 8952 Irdning-Donnersbachtal", "lat": 47.502221, "lng": 14.0998824}, {"name": "Clara Fey Campus – Maria Regina (AHS)", "type": "Wien", "address": "Hofzeile 22, 1190 Wien", "lat": 48.243001, "lng": 16.3533186}, {"name": "BG/BRG Pestalozzi Graz", "type": "Steiermark", "address": "Pestalozzistraße 5, 8010 Graz", "lat": 47.0653871, "lng": 15.4379294}, {"name": "BG/BRG Purkersdorf", "type": "Niederösterreich", "address": "Herrengasse 4, 3002 Purkersdorf", "lat": 48.2083255, "lng": 16.1796589}, {"name": "Bilger Breustedt Mittelschule Taufkirchen / Pram", "type": "Oberösterreich", "address": "Schulstraße 3, 4775 Taufkirchen", "lat": 48.4091477, "lng": 13.5329408}, {"name": "MS Gmunden Stadt", "type": "Oberösterreich", "address": "J. E. Haberthstraße 7-9, 4810 Gmunden", "lat": 48.09, "lng": 13.79}, {"name": "Mittelschule Schärding", "type": "Oberösterreich", "address": "Schulstraße 5b, 4780 Schärding", "lat": 48.4543812, "lng": 13.4380526}, {"name": "Mittelschule Alland", "type": "Wien", "address": "Badgasse 303, 2534 Alland", "lat": 48.1, "lng": 16.28}, {"name": "BRG/BORG Feldkirch", "type": "Vorarlberg", "address": "Schillerstraße 13, 6800 Feldkirch", "lat": 47.2341195, "lng": 9.5902682}, {"name": "BRG 6 Marchettigasse", "type": "Wien", "address": "Marchettigasse 3, 1060 Wien", "lat": 48.1915406, "lng": 16.3503954}, {"name": "Mittelschule III Weiz", "type": "Steiermark", "address": "Offenburger Gasse 17, 8160 Weiz", "lat": 47.2201484, "lng": 15.6329662}, {"name": "BRG Hamerling", "type": "Oberösterreich", "address": "Hamerlingstr. 18, 4020 Linz", "lat": 48.2911316, "lng": 14.2999181}, {"name": "BG BRG Groß- Enzersdorf", "type": "Niederösterreich", "address": "Freiherr-von-Smola- Straße 3, 2301 Groß- Enzersdorf", "lat": 48.2065299, "lng": 16.548988}, {"name": "Gymnasium Institut Neulandschulen Grinzing", "type": "Wien", "address": "Alfred-Wegener-Gasse 10-12, 1190 Wien", "lat": 48.251495, "lng": 16.339085}, {"name": "MS 5 – Otto-Glöckel-Schule", "type": "Oberösterreich", "address": "Dürrnbergerstraße 1, 4020 Linz", "lat": 48.2871662, "lng": 14.2995779}, {"name": "MUSIKMITTELSCHULE &#038; WiB-MITTELSCHULE ZELL AM SEE", "type": "Salzburg", "address": "Schulstraße 2a, 5700 Zell am See", "lat": 47.3236142, "lng": 12.7953829}, {"name": "Schule am See, Hard", "type": "Vorarlberg", "address": "Seestraße 58, 6971 Hard", "lat": 47.488875, "lng": 9.6817492}, {"name": "IMS Orth an der Donau", "type": "Niederösterreich", "address": "Schloßplatz 4, 2304 Orth/Donau", "lat": 48.1454993, "lng": 16.6999859}, {"name": "Mittelschule Pregarten", "type": "Oberösterreich", "address": "Althauserstr., 4230 Pregarten", "lat": 48.3529226, "lng": 14.5341485}, {"name": "MS Weitra", "type": "Niederösterreich", "address": "Karl-Egon-Straße 200, 3970 Weitra", "lat": 48.7039257, "lng": 14.8951025}, {"name": "Neue Mittelschule sport und Mint", "type": "Niederösterreich", "address": "Johann Gasser Str.7, 3100 St.Pölten, 3100 St. Pölten", "lat": 48.75, "lng": 15.63}, {"name": "SMS Bad Vöslau", "type": "Niederösterreich", "address": "Raulestraße 9, 2540 BAD VÖSLAU", "lat": 47.9702909, "lng": 16.2166063}, {"name": "Mittelschule Krems", "type": "Niederösterreich", "address": "Edmund Hofbauer Str.9, 3500 Krems", "lat": 48.4076014, "lng": 15.6011122}, {"name": "ASO Korneuburg", "type": "Niederösterreich", "address": "Liese-Prokop-Straße 5, 2100 Korneuburg", "lat": 48.3555233, "lng": 16.3232315}, {"name": "MS Hainburg", "type": "Niederösterreich", "address": "Babenbergerstr. 27, 2410 Hainburg", "lat": 48.144141, "lng": 16.943808}, {"name": "Mittelschule Hollabrunn", "type": "Niederösterreich", "address": "Kornhergasse 4, 2020 Hollabrunn", "lat": 48.5598119, "lng": 16.0766748}, {"name": "Mittelschule Großkrut", "type": "Niederösterreich", "address": "Schulstraße 5, 2143 Großkrut", "lat": 48.6429076, "lng": 16.7220112}, {"name": "Erste Bank Sommercamp 2025", "type": "Wien", "address": "Straße 1, 1000 Wien", "lat": 48.1816838, "lng": 16.5003193}, {"name": "SportMS Traiskirchen", "type": "Niederösterreich", "address": "Goethestraße 6-8, 2514 Traiskirchen", "lat": 48.0179287, "lng": 16.2900843}, {"name": "Neue Mittelschule Ertl", "type": "Niederösterreich", "address": "Schulstraße 1, 3355 Ertl", "lat": 47.9787808, "lng": 14.6303328}, {"name": "Lehrwerkstätte Welser Profile", "type": "Niederösterreich", "address": "Am Welser Platz 1, 3264 Gresten", "lat": 47.99264, "lng": 15.0175}, {"name": "Bertha von Suttner Mittelschule 27", "type": "Oberösterreich", "address": "Dornacher Straße 35, 4040 Linz", "lat": 48.3334781, "lng": 14.3033943}, {"name": "Mittelschule Lend", "type": "Salzburg", "address": "Oberlend 32, 5651 Lend", "lat": 47.35, "lng": 12.8}, {"name": "Mittelschule Parsch", "type": "Salzburg", "address": "Schlossstraße 19, 5020 Salzburg", "lat": 47.8062363, "lng": 13.0723287}, {"name": "Musisches Gymnasium Salzburg", "type": "Salzburg", "address": "Haunspergstraße 77, 5020 Salzburg", "lat": 47.8196348, "lng": 13.0374081}, {"name": "BG/BRG Klosterneuburg", "type": "Niederösterreich", "address": "Buchberggasse 31, 3400 Klosterneuburg", "lat": 48.3036723, "lng": 16.3193875}, {"name": "BG u BRG Bludenz", "type": "Vorarlberg", "address": "Unterfeldstr 13, 6700 Bludenz", "lat": 47.1553856, "lng": 9.8288914}, {"name": "BG Bachgasse", "type": "Niederösterreich", "address": "Untere Bachgasse 8, 2340 Mödling", "lat": 48.0845424, "lng": 16.2998512}, {"name": "NMS St. Leonhard am Forst", "type": "Niederösterreich", "address": "Manker Straße 1, 3254 Bergland", "lat": 48.1416881, "lng": 15.1607885}, {"name": "Mittelschule Perg Schulzentrum", "type": "Oberösterreich", "address": "Waidhoferstraße 2, 4320 Perg", "lat": 48.2408785, "lng": 14.6381357}, {"name": "BG/BRG Ramsauerstr.", "type": "Oberösterreich", "address": "Ramsauerstr. 94, 4020 Linz", "lat": 48.2649604, "lng": 14.2903405}, {"name": "MS Brunn/Maria Enzersdorf", "type": "Niederösterreich", "address": "Jubiläumstraße 1-5, 2345 Brunn am Gebirge", "lat": 48.1045536, "lng": 16.2821019}, {"name": "ESM Mödling", "type": "Niederösterreich", "address": "Lerchengasse 18, 2340 Mödling", "lat": 48.0874315, "lng": 16.286862}, {"name": "PMS Gleiß", "type": "Niederösterreich", "address": "Waidhofnerstr. 22, 3332 Rosenau", "lat": 48.0203863, "lng": 14.7541904}, {"name": "Sportmittelschule Wittelsbachstraße 6", "type": "Wien", "address": "Wittelsbachstraße 6, 1020 Wien", "lat": 48.2058818, "lng": 16.3999475}, {"name": "MS Ternitz", "type": "Niederösterreich", "address": "F. Lichtenwörther Gasse 1, 2630 Ternitz", "lat": 47.717936, "lng": 16.0323048}, {"name": "MS Ybbsitz", "type": "Niederösterreich", "address": "Maisberg 13, 3341 Ybbsitz", "lat": 47.9462942, "lng": 14.8911668}, {"name": "IMS Hinterbrühl", "type": "Niederösterreich", "address": "Gaadnerstr. 36, 2371 Hinterbrühl", "lat": 48.0805915, "lng": 16.2334942}, {"name": "NöMS Ebenfurth", "type": "Niederösterreich", "address": "Hauptstraße 1, 2490 Ebenfurth", "lat": 47.97, "lng": 16.22}, {"name": "Musikmittelschule Traun", "type": "Oberösterreich", "address": "Schulstraße 11, 4050 Traun", "lat": 48.2245547, "lng": 14.2384222}, {"name": "Privatmittelschule Mary Ward Krems", "type": "Niederösterreich", "address": "Hoher Markt 1, 3500 Krems ", "lat": 48.4129224, "lng": 15.6017687}, {"name": "Kirchliche Pädagogische Hochschule Wien/Niederösterreich", "type": "Wien", "address": "Dr. Gschmeidler Straße 28, 3500 Krems", "lat": 48.41, "lng": 15.61}, {"name": "Mittelschule Gallneukirchen", "type": "Oberösterreich", "address": "Schulfeld 2, 4210 Gallneukirchen", "lat": 48.3551393, "lng": 14.4158002}, {"name": "MS Schulzentrum Hall", "type": "Tirol", "address": "Universitätsallee 1, 6060 Hall in Tirol", "lat": 47.2839192, "lng": 11.5115247}, {"name": "Sportmittelschulle Ybbs", "type": "Niederösterreich", "address": "Schulring 7, 3370 Ybbs", "lat": 48.1781639, "lng": 15.0824099}, {"name": "OMSi Glasergasse 8", "type": "Wien", "address": "Glasergasse 8, 1090 Wien", "lat": 48.224198, "lng": 16.3631967}, {"name": "Priv. Gymnasium und ORG des Schulvereins der Grazer Ursulinen", "type": "Steiermark", "address": "Leonhardstraße 62, 8010 Graz", "lat": 47.073243, "lng": 15.4571011}, {"name": "MS Klein St. Paul", "type": "Kärnten", "address": "Marktstraße 32, 9373 Klein Sankt Paul", "lat": 46.8343615, "lng": 14.540556}, {"name": "MS St. Katharei/Laming", "type": "Steiermark", "address": "Niederdorf 85, 8611 Tragöß-St. Katharein", "lat": 47.4703005, "lng": 15.1281711}, {"name": "Mittelschule Steinach am Brenner", "type": "Tirol", "address": "Trinserstraße 17, 6150 Steinach am Brenner", "lat": 47.0921015, "lng": 11.4639947}, {"name": "BRG Freistadt", "type": "Oberösterreich", "address": "Zemannstraße 4, 4240 Freistadt", "lat": 48.5089353, "lng": 14.5030076}, {"name": "MS Adolf-Loos-Gasse", "type": "Wien", "address": "Adolf-Loos-Gasse 2, 1210 Wien", "lat": 48.2693269, "lng": 16.4546967}, {"name": "BRG/BORG Kirchdorf an der Krems", "type": "Oberösterreich", "address": "Weinzierlerstraße 22, 4560 Kirchdorf an der Krems", "lat": 47.8985553, "lng": 14.1297189}, {"name": "MSI Wiesberggasse", "type": "Wien", "address": "Wiesberggasse 7, 1160 Wien", "lat": 48.2091478, "lng": 16.3081684}, {"name": "MS Schwertberg", "type": "Oberösterreich", "address": "Reitbergstraße 2, 4311 Schwertberg", "lat": 48.2735552, "lng": 14.5754306}, {"name": "Mittelschule St. Peter", "type": "Steiermark", "address": "Brucknerstrasse 53, 8010 Graz", "lat": 47.0571907, "lng": 15.4614601}, {"name": "Mittelschule Feldkirchen digital", "type": "Kärnten", "address": "Schulhausgasse 5, 9560 Feldkirchen", "lat": 46.7283465, "lng": 14.092696}, {"name": "MS Passail", "type": "Steiermark", "address": "Weizer Straße 46, 8162 Passail", "lat": 47.28, "lng": 15.52}, {"name": "MS NPS Fließ", "type": "Tirol", "address": "Dorf 181, 6521 Fließ", "lat": 47.120942, "lng": 10.6245969}, {"name": "BORG Dornbirn-Schoren", "type": "Vorarlberg", "address": "Höchsterstraße 32, 6850 Dornbirn", "lat": 47.4111853, "lng": 9.7296424}, {"name": "Mittelschule Bleiburg", "type": "Kärnten", "address": "Schulweg 1, 9150 Bleiburg", "lat": 46.5540578, "lng": 14.8052154}, {"name": "MS Dr. Theodor Körner Kapfenberg", "type": "Steiermark", "address": "Lannergasse 1, 8605 Kapfenberg", "lat": 47.4609505, "lng": 15.3298159}, {"name": "Mittelschule Lingenau", "type": "Vorarlberg", "address": "Hof 269, 6951 Lingenau", "lat": 47.4512002, "lng": 9.9195054}, {"name": "MS Wolfsberg im Schwarzautal", "type": "Steiermark", "address": "Wolfsberg 124, 8421 Schwarzautal", "lat": 46.8442239, "lng": 15.6549967}, {"name": "MS Laßnitzhöhe", "type": "Steiermark", "address": "Hauptstraße 75, 8301 Laßnitzhöhe", "lat": 47.0758284, "lng": 15.5898661}, {"name": "MS Kopp2", "type": "Wien", "address": "Koppstraße 110, 1160 Wien", "lat": 48.2063307, "lng": 16.3355748}, {"name": "Jupiter Dolichenus NÖMS Amstetten Mauer", "type": "Niederösterreich", "address": "Hausmeningerstraße 6, 3362 Mauer", "lat": 48.0925302, "lng": 14.7986621}, {"name": "IT-Mittelschule Grein", "type": "Oberösterreich", "address": "Groißgraben 2, 4360 Grein", "lat": 48.2250309, "lng": 14.8474028}, {"name": "SMS Wals-Siezenheim", "type": "Salzburg", "address": "Schulstr. 11, 5071 Wals-Siezenheim", "lat": 47.7949314, "lng": 12.9811459}, {"name": "Msi Feuerbachstraße", "type": "Wien", "address": "Feuerbachstraße 1, 1020 Wien", "lat": 48.2203479, "lng": 16.4042672}, {"name": "BRG18 Schopenhauerstraße", "type": "Wien", "address": "Schopenhauerstraße 49, 1180 Wien", "lat": 48.2244549, "lng": 16.3389561}, {"name": "GTMS Gudrunstraße 110", "type": "Wien", "address": "Gudrunstraße 110, 1100 Wien", "lat": 48.1783328, "lng": 16.3812897}, {"name": "Mittelschule Gassergasse 44", "type": "Wien", "address": "Gassergasse 44, 1050 Wien", "lat": 48.1827912, "lng": 16.3614296}, {"name": "MS Völkermarkt", "type": "Kärnten", "address": "Johann-Heinrich-Pestalozzi-Straße 4/1, 9100 Völkermarkt", "lat": 46.66, "lng": 14.63}, {"name": "MS Leibnizgasse", "type": "Wien", "address": "Leibnizgasse 33, 1100 Wien", "lat": 48.1726954, "lng": 16.3761094}, {"name": "MS Fieberbrunn", "type": "Tirol", "address": "Schulweg 5, 6391 Fieberbrunn", "lat": 47.4806471, "lng": 12.5392929}, {"name": "Mittelschule Kühnsdorf", "type": "Kärnten", "address": "Mitte 73, 9125 Kühnsdorf", "lat": 46.6186539, "lng": 14.6270468}, {"name": "Mittelschule Haiming", "type": "Tirol", "address": "Tränkeweg 8, 6425 Haiming", "lat": 47.2541176, "lng": 10.8817313}, {"name": "Gymnasium Neulandschule Laaerberg", "type": "Wien", "address": "Ludwig von Höhnelgasse 17-19, 1100 Wien", "lat": 48.17, "lng": 16.38}, {"name": "Polytechnische Schule Herrgottwies – Graz", "type": "Steiermark", "address": "Herrgottwiesgasse 162/a, 8055 Graz", "lat": 47.0441539, "lng": 15.4305801}, {"name": "MS Oberwölz", "type": "Steiermark", "address": "Vorstadt 70, 8832 Oberwölz", "lat": 47.2018907, "lng": 14.2863314}, {"name": "MS Albrechtsberg", "type": "Niederösterreich", "address": "Els 54, 3614 Els", "lat": 48.443251, "lng": 15.3765778}, {"name": "Fachmittelschule (FMS) an der Polytechnischen Schule (PTS) im Zentrum", "type": "Wien", "address": "Burggasse 14-16, 1070 Wien", "lat": 48.2044082, "lng": 16.3544674}, {"name": "NMS Gerasdorf", "type": "Niederösterreich", "address": "Bahnstraße 26, 2201 Gerasdorf bei Wien", "lat": 48.293965, "lng": 16.4713491}, {"name": "Sigmund-Freud-Gymnasium", "type": "Wien", "address": "Wohlmutstraße 3, 1020 Wien", "lat": 48.2208772, "lng": 16.4023605}, {"name": "MSi Lortzinggasse", "type": "Wien", "address": "Lortzinggasse 2, 1140 Wien", "lat": 48.1976652, "lng": 16.313646}, {"name": "BG/BRG Bruck an der Mur", "type": "Steiermark", "address": "Keplerstrasse 2, 8600 Bruck an der Mur", "lat": 47.42, "lng": 15.27}, {"name": "MS Mureck", "type": "Steiermark", "address": "Grazer Straße 37, 8480 Mureck", "lat": 46.7062796, "lng": 15.7641666}, {"name": "AHS Theodor Kramer", "type": "Wien", "address": "Theodor Kramer Straße 3, 1220 Wien", "lat": 48.2548601, "lng": 16.4516794}, {"name": "St. Ursula", "type": "Wien", "address": "Franz-Asenbauergasse 49, 1230 Wien", "lat": 48.1561884, "lng": 16.2634679}, {"name": "MS Brüßlgasse", "type": "Wien", "address": "Brüßlgasse 18, 1160 Wien", "lat": 48.2083223, "lng": 16.3213961}, {"name": "Gymnasium St. Ursula", "type": "Wien", "address": "Franz-Asenbauer-Gasse 49, 1230 Wien", "lat": 48.1561884, "lng": 16.2634679}, {"name": "MS Weitersfeld", "type": "Niederösterreich", "address": "Weitersfeld 154, 2084 Weitersfeld", "lat": 48.7808345, "lng": 15.815596}, {"name": "Prig21", "type": "Wien", "address": "Anton-Böckgassse 37, 1210 Wien", "lat": 48.27, "lng": 16.42}, {"name": "Musik- und Informatikmittelschule Wendstattgasse", "type": "Wien", "address": "Wendstattgase 5/1, 1100 Wien", "lat": 48.15, "lng": 16.39}, {"name": "MS Josef-Enslein-Platz", "type": "Wien", "address": "1-3, 1100 Wien", "lat": 48.2151551, "lng": 16.3512697}, {"name": "Mittelschule Steinergasse", "type": "Wien", "address": "Steinergasse 25, 1230 Wien", "lat": 48.1451726, "lng": 16.2911343}, {"name": "BG/BRG Gleisdorf", "type": "Steiermark", "address": "Dr.-Hermann-Hornung-Gasse 29, 8200 Gleisdorf", "lat": 47.1073313, "lng": 15.7152848}, {"name": "Sport/Mittelschule St. Valentin/ Schubertviertel", "type": "Niederösterreich", "address": "Schubertviertel 50, 4300 St. Valentin", "lat": 48.1733988, "lng": 14.5264389}, {"name": "Digital Girls Hackathon 2024", "type": "Wien", "address": "Lassallestraße 9, 1020 Wien", "lat": 48.2233828, "lng": 16.3996638}];
+        
+        // Define Austria bounds (approximate)
+        const austriaBounds = L.latLngBounds(
+            [46.4, 9.5],   // Southwest corner
+            [49.0, 17.2]   // Northeast corner
+        );
+        
+        // Calculate center of Austria for initial view
+        const austriaCenter = austriaBounds.getCenter();
+        
+        // Create map with higher default zoom (10 - more zoomed in)
+        let map = L.map('map', {
+            maxBounds: austriaBounds.pad(0.1),
+            minZoom: 7,
+            maxZoom: 12
+        }).setView([austriaCenter.lat, austriaCenter.lng], 8);
+        
+        // Map Tile Themes Available:
+        // You can find more map themes at:
+        // - CartoDB: https://carto.com/basemaps/ (Positron, Dark Matter, Voyager)
+        // - Stamen: http://maps.stamen.com/ (Terrain, Toner, Watercolor)
+        // - OpenStreetMap: https://www.openstreetmap.org/ (Standard OSM)
+        // - Esri: https://www.arcgis.com/home/item.html?id=2265411304d94ec68a11745b66e3e4d4
+        // - Mapbox: https://docs.mapbox.com/api/maps/ (requires API key)
+        
+        // Add CartoDB Positron as default (light, clean style)
+        const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 12
+        }).addTo(map);
+        
+        // Add OpenStreetMap as alternative
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> Contributors',
+            maxZoom: 12
+        });
+        
+        // Add CartoDB Dark Matter (dark theme)
+        const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 12
+        });
+        
+        // Add CartoDB Voyager (colorful theme)
+        const voyagerLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 12
+        });
+        
+        // Add Stamen Terrain (terrain theme)
+        const terrainLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            maxZoom: 12
+        });
+        
+        // Add layer control with all themes
+        const baseMaps = {
+            "CartoDB Positron (Light)": cartoLayer,
+            "OpenStreetMap": osmLayer,
+            "CartoDB Dark Matter": darkLayer,
+            "CartoDB Voyager": voyagerLayer,
+            "Stamen Terrain": terrainLayer
+        };
+        L.control.layers(baseMaps, {}, {position: 'topright'}).addTo(map);
+        
+        // Prevent scrolling/dragging outside Austria bounds
+        map.on('drag', function() {
+            const center = map.getCenter();
+            if (!austriaBounds.contains(center)) {
+                const constrainedLat = Math.max(austriaBounds.getSouth(), Math.min(center.lat, austriaBounds.getNorth()));
+                const constrainedLng = Math.max(austriaBounds.getWest(), Math.min(center.lng, austriaBounds.getEast()));
+                map.panTo([constrainedLat, constrainedLng], { animate: false });
+            }
+        });
+        
+        // Prevent zooming outside bounds
+        map.on('zoomend', function() {
+            const center = map.getCenter();
+            if (!austriaBounds.contains(center)) {
+                const constrainedLat = Math.max(austriaBounds.getSouth(), Math.min(center.lat, austriaBounds.getNorth()));
+                const constrainedLng = Math.max(austriaBounds.getWest(), Math.min(center.lng, austriaBounds.getEast()));
+                map.setView([constrainedLat, constrainedLng], map.getZoom(), { animate: false });
+            }
+        });
+
+
+        // Add school markers to a cluster group with custom styling
+        const markers = L.markerClusterGroup({
+            maxClusterRadius: 50,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            iconCreateFunction: function(cluster) {
+                var count = cluster.getChildCount();
+                var size = count > 100 ? 'large' : (count > 20 ? 'medium' : 'small');
+                return new L.DivIcon({
+                    html: '<div style="background-color: #4a90e2; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); font-family: Segoe UI, Arial, sans-serif;">' + count + '</div>',
+                    className: 'marker-cluster',
+                    iconSize: L.point(40, 40)
+                });
+            }
+        });
+        
+        schools.forEach(school => {
+            const marker = L.marker([school.lat, school.lng], {
+                icon: L.divIcon({
+                    html: '<i class="fa-solid fa-school" style="color: #4a90e2; font-size: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"></i>',
+                    className: 'custom-marker',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 24]
+                })
+            });
+            marker.bindPopup(`<div style="font-family: Segoe UI, Arial, sans-serif; min-width: 200px;"><h3 style="margin: 0 0 8px 0; color: #2a2a3a; font-size: 1.1em;">${school.name}</h3><p style="margin: 4px 0; color: #666;"><strong>Typ:</strong> ${school.type}</p><p style="margin: 4px 0; color: #666;"><strong>Adresse:</strong> ${school.address}</p></div>`, {
+                maxWidth: 300
+            });
+            marker.bindTooltip(school.name, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -10]
+            });
+            markers.addLayer(marker);
+        });
+        map.addLayer(markers);
+        
+        
+    </script>
+</body>
+</html>

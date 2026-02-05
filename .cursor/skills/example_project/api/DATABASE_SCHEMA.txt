@@ -1,0 +1,632 @@
+-- dbgqpq6nxd7mlp.admin_teacher_lists definition
+
+CREATE TABLE `admin_teacher_lists` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name der Liste (z.B. "Lehrer ohne Infowebinar")',
+  `created_by_user_id` int NOT NULL COMMENT 'Admin, der die Liste erstellt hat',
+  `filter_config` json NOT NULL COMMENT 'Gespeicherte Filter-Konfiguration',
+  `columns_config` json NOT NULL COMMENT 'Welche Spalten angezeigt werden sollen',
+  `last_updated` datetime DEFAULT NULL COMMENT 'Letzte Aktualisierung des Caches',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_generating` tinyint(1) DEFAULT '0' COMMENT 'Wird gerade generiert/aktualisiert (1 = ja, 0 = nein)',
+  `cache_progress_total` int DEFAULT NULL COMMENT 'Gesamtanzahl der zu verarbeitenden Einträge',
+  `cache_progress_processed` int DEFAULT NULL COMMENT 'Anzahl der bereits verarbeiteten Einträge',
+  PRIMARY KEY (`id`),
+  KEY `idx_created_by_user_id` (`created_by_user_id`),
+  KEY `idx_name` (`name`),
+  KEY `idx_last_updated` (`last_updated`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.calendly_events definition
+
+CREATE TABLE `calendly_events` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `calendly_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Calendly Event UUID (eindeutige Identifikation)',
+  `event_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name des Events (z.B. "TLr - Infowebinar")',
+  `start_time` datetime NOT NULL COMMENT 'Startzeit des Events',
+  `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'active' COMMENT 'Status des Events (active, cancelled, etc.)',
+  `location` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Meeting-Link (z.B. Google Meet URL)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_calendly_id` (`calendly_id`),
+  KEY `idx_event_name` (`event_name`),
+  KEY `idx_start_time` (`start_time`),
+  KEY `idx_status` (`status`),
+  KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.certificate_types definition
+
+CREATE TABLE `certificate_types` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `type` varchar(45) NOT NULL,
+  `title` varchar(255) DEFAULT 'Titel',
+  `description` text,
+  `template_file_path` varchar(45) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.challenges definition
+
+CREATE TABLE `challenges` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `challenge_type` enum('tscore','projects') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `state` varchar(50) DEFAULT 'active',
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `state_filter` varchar(100) DEFAULT NULL,
+  `sponsor_filter` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `image_path` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.classes definition
+
+CREATE TABLE `classes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `teacher_id` int DEFAULT NULL,
+  `school_id` int DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_classes_school_id` (`school_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5041 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.course_packages definition
+
+CREATE TABLE `course_packages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name des Kurspakets',
+  `description` text COLLATE utf8mb4_unicode_ci COMMENT 'Beschreibung des Kurspakets',
+  `course_ids` json DEFAULT NULL COMMENT 'Array der Kurs-IDs als JSON',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.courses definition
+
+CREATE TABLE `courses` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(45) DEFAULT 'Kurs',
+  `description` varchar(500) DEFAULT NULL,
+  `cover_path` varchar(45) DEFAULT NULL,
+  `background_path` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `prio` int DEFAULT '0',
+  `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.email_templates definition
+
+CREATE TABLE `email_templates` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `subject` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `body` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_html` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `scheduled_at` datetime DEFAULT NULL,
+  `recipient_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `custom_email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `scheduled_sent` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_name` (`name`),
+  KEY `idx_scheduled` (`scheduled_at`,`scheduled_sent`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.lection_completions definition
+
+CREATE TABLE `lection_completions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `student_id` int NOT NULL,
+  `lection_id` int NOT NULL,
+  `completed_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_student_lection` (`student_id`,`lection_id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_lection_id` (`lection_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.lections definition
+
+CREATE TABLE `lections` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) DEFAULT 'Lektion X',
+  `text` longtext,
+  `course_id` int DEFAULT NULL,
+  `order` int DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.messages definition
+
+CREATE TABLE `messages` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(45) DEFAULT 'Titel',
+  `message` varchar(1000) DEFAULT NULL,
+  `sender` varchar(45) DEFAULT NULL,
+  `receiver` varchar(45) DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  `m_read` varchar(1) DEFAULT NULL,
+  `thread_id` int DEFAULT NULL,
+  `archived` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.projects definition
+
+CREATE TABLE `projects` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(45) DEFAULT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `project_data` longtext COMMENT 'Scratch-Projektdatei als JSON (.sb3 Format)',
+  `cover` longtext,
+  `student_id` int DEFAULT NULL,
+  `status` enum('working','check','published') NOT NULL,
+  `likes` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.quizzes definition
+
+CREATE TABLE `quizzes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `lection_id` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_lection_id` (`lection_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.school_years definition
+
+CREATE TABLE `school_years` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Format: 2024/2025',
+  `start_date` date NOT NULL COMMENT 'Startdatum des Schuljahrs',
+  `end_date` date NOT NULL COMMENT 'Enddatum des Schuljahrs',
+  `is_current` tinyint(1) DEFAULT '0' COMMENT 'Flag für aktuelles Schuljahr',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `idx_is_current` (`is_current`),
+  KEY `idx_dates` (`start_date`,`end_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.schools definition
+
+CREATE TABLE `schools` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT 'Schule',
+  `bundesland` varchar(45) DEFAULT 'Bundesland',
+  `schulart` varchar(100) DEFAULT NULL,
+  `schultyp` varchar(100) DEFAULT NULL,
+  `ort` varchar(255) DEFAULT NULL,
+  `strasse` varchar(255) DEFAULT NULL,
+  `plz` varchar(10) DEFAULT NULL,
+  `school_code` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `erstelldatum` datetime DEFAULT NULL,
+  `created_by_user_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `school_code` (`school_code`),
+  KEY `idx_created_by_user_id` (`created_by_user_id`),
+  KEY `idx_school_code` (`school_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=508 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.sponsors definition
+
+CREATE TABLE `sponsors` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.teacher_stati definition
+
+CREATE TABLE `teacher_stati` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order` int NOT NULL,
+  `label` varchar(45) DEFAULT NULL,
+  `display_name` varchar(100) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.teachers definition
+
+CREATE TABLE `teachers` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `school_id` int DEFAULT NULL,
+  `infowebinar` datetime DEFAULT NULL,
+  `school_admin` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0',
+  `student_id` int DEFAULT NULL,
+  `status_id` int DEFAULT '0',
+  `waitlist` tinyint DEFAULT NULL,
+  `register_schoolcode` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_register_schoolcode` (`register_schoolcode`)
+) ENGINE=InnoDB AUTO_INCREMENT=1042 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.users definition
+
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `role` varchar(45) DEFAULT NULL,
+  `role_id` int DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  `password` varchar(45) DEFAULT '123',
+  `last_login` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `phone` varchar(25) DEFAULT NULL,
+  `newsletter` varchar(1) DEFAULT NULL,
+  `salutation` varchar(45) DEFAULT NULL,
+  `email_verification_code` int DEFAULT NULL,
+  `email_verified` tinyint(1) DEFAULT '0',
+  `avatar_seed` varchar(255) DEFAULT NULL,
+  `avatar_style` varchar(50) DEFAULT 'avataaars',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_UNIQUE` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=101883 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.admin_teacher_list_cache definition
+
+CREATE TABLE `admin_teacher_list_cache` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `list_id` int NOT NULL COMMENT 'FK zu admin_teacher_lists',
+  `teacher_id` int NOT NULL COMMENT 'FK zu teachers',
+  `cached_data` json NOT NULL COMMENT 'Alle Daten des Lehrers zum Zeitpunkt der Cachierung',
+  `cached_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Zeitpunkt der Cachierung',
+  `color_marker` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Farbliche Markierung (z.B. "red", "yellow", "green", "blue", "orange", "purple", "gray")',
+  `notes` text COLLATE utf8mb4_unicode_ci COMMENT 'Notizen/Kommentare zu diesem Eintrag',
+  `tags` json DEFAULT NULL COMMENT 'Array von Tags (z.B. ["wichtig", "nachfassen", "erledigt"])',
+  `updated_by_user_id` int DEFAULT NULL COMMENT 'Admin, der zuletzt geändert hat',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Letzte Änderung',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_list_teacher` (`list_id`,`teacher_id`),
+  KEY `idx_list_id` (`list_id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_color_marker` (`color_marker`),
+  KEY `idx_cached_at` (`cached_at`),
+  CONSTRAINT `admin_teacher_list_cache_ibfk_1` FOREIGN KEY (`list_id`) REFERENCES `admin_teacher_lists` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `admin_teacher_list_cache_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=26032 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.calendly_event_attendees definition
+
+CREATE TABLE `calendly_event_attendees` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `event_id` int NOT NULL COMMENT 'FK zu calendly_events',
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name des Teilnehmers',
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'E-Mail des Teilnehmers',
+  `attended` tinyint(1) DEFAULT NULL COMMENT 'Anwesenheit: NULL = noch nicht bewertet, TRUE = anwesend, FALSE = nicht anwesend',
+  `updated_by_user_id` int DEFAULT NULL COMMENT 'User-ID des Admins, der die Anwesenheit eingetragen hat',
+  `user_id` int DEFAULT NULL COMMENT 'FK zu users.id - Zuordnung zu User im System',
+  `prognosis_class_count` int DEFAULT NULL COMMENT 'Prognose Anzahl Klassen',
+  `prognosis_start` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Prognose Start (Textfeld, z.B. "Q1 2025", "September 2025")',
+  `notes` text COLLATE utf8mb4_unicode_ci COMMENT 'Formloses Notizfeld',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_event_attendee` (`event_id`,`email`),
+  KEY `idx_event_id` (`event_id`),
+  KEY `idx_attended` (`attended`),
+  KEY `idx_updated_by` (`updated_by_user_id`),
+  KEY `idx_user_id` (`user_id`),
+  CONSTRAINT `calendly_event_attendees_ibfk_1` FOREIGN KEY (`event_id`) REFERENCES `calendly_events` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `calendly_event_attendees_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.challenge_participations definition
+
+CREATE TABLE `challenge_participations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `challenge_id` int NOT NULL,
+  `project_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_challenge_project` (`challenge_id`,`project_id`),
+  KEY `idx_challenge_id` (`challenge_id`),
+  KEY `idx_project_id` (`project_id`),
+  CONSTRAINT `challenge_participations_ibfk_1` FOREIGN KEY (`challenge_id`) REFERENCES `challenges` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `challenge_participations_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.class_orders definition
+
+CREATE TABLE `class_orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL COMMENT 'Verknüpfung mehrerer Einträge zu einer Order (für Rechnungsstellung)',
+  `class_id` int NOT NULL COMMENT 'Verknüpfung zur Klasse',
+  `course_package_id` int NOT NULL COMMENT 'Verknüpfung zum Kurspaket',
+  `provisioning_type` enum('funded','invoice','uew') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Bereitstellungsform: funded=gefördert, invoice=Rechnung, uew=Unterrichtsmittel eigener Wahl',
+  `student_count` int NOT NULL COMMENT 'Anzahl der Schüler in dieser Bestellung',
+  `user_id` int NOT NULL COMMENT 'User-ID des Bestellers (teacher_id aus users.role_id)',
+  `school_year_id` int DEFAULT NULL COMMENT 'Verknüpfung zum Schuljahr',
+  `status` enum('pending','paid','completed','cancelled') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending' COMMENT 'Status der Order: pending=ausstehend, paid=bezahlt, completed=abgeschlossen, cancelled=storniert',
+  `price_per_student` decimal(10,2) NOT NULL DEFAULT '12.00' COMMENT 'Preis pro Schüler in Euro',
+  `tax_rate` decimal(5,4) NOT NULL DEFAULT '0.2000' COMMENT 'Steuersatz (z.B. 0.2000 für 20%)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_order_id` (`order_id`),
+  KEY `idx_class_id` (`class_id`),
+  KEY `idx_course_package_id` (`course_package_id`),
+  KEY `idx_provisioning_type` (`provisioning_type`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_school_year_id` (`school_year_id`),
+  CONSTRAINT `class_orders_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `class_orders_ibfk_2` FOREIGN KEY (`course_package_id`) REFERENCES `course_packages` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.class_school_years definition
+
+CREATE TABLE `class_school_years` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `class_id` int NOT NULL,
+  `school_year_id` int NOT NULL,
+  `is_active` tinyint(1) DEFAULT '1' COMMENT 'Ob die Klasse in diesem Schuljahr aktiv ist',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_class_year` (`class_id`,`school_year_id`),
+  KEY `idx_class` (`class_id`),
+  KEY `idx_school_year` (`school_year_id`),
+  KEY `idx_is_active` (`is_active`),
+  CONSTRAINT `class_school_years_ibfk_1` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `class_school_years_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_years` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1916 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.infowebinar_participation definition
+
+CREATE TABLE `infowebinar_participation` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `teacher_id` int NOT NULL,
+  `webinar_date` datetime NOT NULL,
+  `participated` tinyint(1) DEFAULT NULL COMMENT 'Ob der Lehrer tatsächlich teilgenommen hat (NULL = noch nicht bewertet, TRUE = teilgenommen, FALSE = nicht teilgenommen)',
+  `updated_by_user_id` int DEFAULT NULL COMMENT 'User-ID des Admins, der die Bewertung (teilgenommen/nicht teilgenommen) eingetragen hat',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_webinar_date` (`webinar_date`),
+  KEY `idx_updated_by` (`updated_by_user_id`),
+  CONSTRAINT `infowebinar_participation_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.quiz_questions definition
+
+CREATE TABLE `quiz_questions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quiz_id` int NOT NULL,
+  `type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `text` text COLLATE utf8mb4_unicode_ci,
+  `order_index` int DEFAULT '0',
+  `points` int DEFAULT '1',
+  `required` tinyint(1) DEFAULT '1',
+  `question_data` json DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_quiz_id` (`quiz_id`),
+  KEY `idx_type` (`type`),
+  KEY `idx_order` (`order_index`),
+  CONSTRAINT `quiz_questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.quiz_results definition
+
+CREATE TABLE `quiz_results` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `student_id` int NOT NULL,
+  `quiz_id` int NOT NULL,
+  `points_earned` int DEFAULT '0',
+  `points_total` int DEFAULT '0',
+  `passed` tinyint(1) DEFAULT '0',
+  `completed_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_quiz_id` (`quiz_id`),
+  KEY `idx_passed` (`passed`),
+  KEY `idx_completed_at` (`completed_at`),
+  CONSTRAINT `quiz_results_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quizzes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.school_school_years definition
+
+CREATE TABLE `school_school_years` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `school_id` int NOT NULL,
+  `school_year_id` int NOT NULL,
+  `sponsor` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Sponsor für diese Schule in diesem Schuljahr',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_school_year` (`school_id`,`school_year_id`),
+  KEY `idx_school` (`school_id`),
+  KEY `idx_school_year` (`school_year_id`),
+  CONSTRAINT `school_school_years_ibfk_1` FOREIGN KEY (`school_id`) REFERENCES `schools` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `school_school_years_ibfk_2` FOREIGN KEY (`school_year_id`) REFERENCES `school_years` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=837 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.students definition
+
+CREATE TABLE `students` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `class_id` int DEFAULT NULL,
+  `school_id` int DEFAULT NULL,
+  `courses_done` int DEFAULT '0',
+  `projects_wip` int DEFAULT '0',
+  `projects_pending` int DEFAULT '0',
+  `projects_public` int DEFAULT '0',
+  `t_coins` int DEFAULT '0',
+  `is_teacher_placeholder` tinyint(1) DEFAULT '0' COMMENT 'Markiert Lehrer-Placeholder (1) vs. echte Schüler (0)',
+  PRIMARY KEY (`id`),
+  KEY `idx_students_school_id` (`school_id`),
+  KEY `idx_students_class_id` (`class_id`),
+  CONSTRAINT `students_ibfk_class_id` FOREIGN KEY (`class_id`) REFERENCES `classes` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=101882 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.tcoins_transactions definition
+
+CREATE TABLE `tcoins_transactions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `student_id` int NOT NULL,
+  `amount` int NOT NULL,
+  `reason` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reference_id` int DEFAULT NULL,
+  `reference_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_reason` (`reason`),
+  KEY `idx_reference` (`reference_type`,`reference_id`),
+  KEY `idx_created_at` (`created_at`),
+  CONSTRAINT `tcoins_transactions_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=100398 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.teacher_notes definition
+
+CREATE TABLE `teacher_notes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `teacher_id` int NOT NULL COMMENT 'ID des Lehrers in teachers Tabelle',
+  `created_by_user_id` int NOT NULL COMMENT 'ID des Admins, der die Notiz erstellt hat (users.id)',
+  `note_text` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Text der Notiz',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Erstellungsdatum',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Letztes Änderungsdatum',
+  PRIMARY KEY (`id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_created_by_user_id` (`created_by_user_id`),
+  KEY `idx_created_at` (`created_at`),
+  CONSTRAINT `teacher_notes_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.teacher_status_history definition
+
+CREATE TABLE `teacher_status_history` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `teacher_id` int NOT NULL,
+  `status_id` int NOT NULL,
+  `previous_status_id` int DEFAULT NULL,
+  `changed_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `changed_by` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_status_id` (`status_id`),
+  KEY `idx_changed_at` (`changed_at`),
+  CONSTRAINT `teacher_status_history_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4304 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.teacher_waitlist definition
+
+CREATE TABLE `teacher_waitlist` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `teacher_id` int NOT NULL,
+  `school_id` int NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `accepted_at` datetime DEFAULT NULL,
+  `accepted_by` int DEFAULT NULL COMMENT 'ID der Lehrkraft, die die Anfrage akzeptiert hat',
+  `status` enum('pending','accepted','rejected') DEFAULT 'pending',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_teacher_school_pending` (`teacher_id`,`school_id`,`status`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_school_id` (`school_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_created_at` (`created_at`),
+  CONSTRAINT `teacher_waitlist_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `teacher_waitlist_ibfk_2` FOREIGN KEY (`school_id`) REFERENCES `schools` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.admins definition
+
+CREATE TABLE `admins` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `teacher_id` int NOT NULL COMMENT 'ID des verknüpften Teachers in teachers Tabelle',
+  `student_id` int NOT NULL COMMENT 'ID des verknüpften Students in students Tabelle',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_teacher_id` (`teacher_id`),
+  UNIQUE KEY `unique_student_id` (`student_id`),
+  KEY `idx_teacher_id` (`teacher_id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_created_at` (`created_at`),
+  CONSTRAINT `admins_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `teachers` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `admins_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- dbgqpq6nxd7mlp.certificates definition
+
+CREATE TABLE `certificates` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `certificate_type` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `student_id` int NOT NULL,
+  `earned_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_student_id` (`student_id`),
+  KEY `idx_earned_date` (`earned_date`),
+  CONSTRAINT `certificates_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- dbgqpq6nxd7mlp.student_privacy_settings definition
+
+CREATE TABLE `student_privacy_settings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `student_id` int NOT NULL,
+  `profile_picture` tinyint(1) DEFAULT '1',
+  `name` tinyint(1) DEFAULT '1',
+  `stats` tinyint(1) DEFAULT '1',
+  `projects` tinyint(1) DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `student_id` (`student_id`),
+  KEY `idx_student_id` (`student_id`),
+  CONSTRAINT `student_privacy_settings_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

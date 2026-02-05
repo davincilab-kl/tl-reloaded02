@@ -1,0 +1,358 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Candara, sans-serif;
+    background: white;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow-y: scroll;
+}
+
+body > header {
+    position: relative;
+    width: 100%;
+}
+
+.register-container {
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: calc(100vh - 200px);
+    padding: 20px;
+    padding-top: 40px;
+}
+
+.register-box {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.register-header {
+    background: white;
+    padding: 40px 30px 20px;
+    text-align: center;
+}
+
+.register-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    margin-bottom: 20px;
+}
+
+.register-header h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.register-header p {
+    font-size: 14px;
+    color: #666;
+    opacity: 0.9;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    padding: 0 30px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    padding: 0 30px;
+    margin-bottom: 20px;
+}
+
+.form-group-half {
+    flex: 1;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-group label i {
+    margin-right: 6px;
+    color: var(--primary-color);
+}
+
+.required {
+    color: #c33;
+    font-weight: 600;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #999;
+}
+
+.error-message {
+    background: #fee;
+    color: #c33;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 0 30px 16px;
+    font-size: 14px;
+    border: 1px solid #fcc;
+}
+
+.success-message {
+    background: #efe;
+    color: #3c3;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 0 30px 16px;
+    font-size: 14px;
+    border: 1px solid #cfc;
+}
+
+.btn-register {
+    width: calc(100% - 60px);
+    margin: 0 30px 20px;
+    padding: 14px;
+}
+
+.btn-register:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.register-footer {
+    padding: 0 30px 30px;
+    text-align: center;
+}
+
+.register-footer p {
+    font-size: 14px;
+    color: #666;
+}
+
+.register-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-footer a:hover {
+    text-decoration: underline;
+}
+
+.checkbox-group {
+    margin-bottom: 16px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+    margin-top: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checkbox-label span {
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Responsive: Auf kleinen Bildschirmen Felder untereinander */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-group-half {
+        margin-bottom: 20px;
+    }
+}
+
+/* Schulauswahl-Seite */
+.school-selection-container {
+    padding: 0 30px 30px;
+}
+
+.school-search-section,
+.school-create-section {
+    margin-bottom: 30px;
+}
+
+.school-search-section h3,
+.school-create-section h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.school-divider {
+    text-align: center;
+    margin: 30px 0;
+    position: relative;
+}
+
+.school-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+.school-divider span {
+    background: white;
+    padding: 0 15px;
+    color: #666;
+    position: relative;
+}
+
+.school-results {
+    margin-top: 15px;
+    max-height: 400px;
+    overflow-y: scroll;
+    min-height: 50px;
+    transition: opacity 0.2s ease;
+    /* Scrollbar immer anzeigen */
+    scrollbar-width: thin;
+    scrollbar-color: #c0c0c0 #f0f0f0;
+}
+
+.school-results::-webkit-scrollbar {
+    width: 12px;
+}
+
+.school-results::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 6px;
+}
+
+.school-results::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-radius: 6px;
+}
+
+.school-results::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+}
+
+.school-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.school-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.school-item:hover {
+    border-color: var(--primary-color);
+    background: #f8f9fa;
+}
+
+.school-item-info {
+    flex: 1;
+}
+
+.school-item-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.school-item-details {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.loading-messages,
+.no-results,
+.error-messages {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.loading-messages i {
+    margin-right: 8px;
+}
+
+.no-results {
+    color: #999;
+    font-style: italic;
+}
+
+.create-school-link {
+    margin-top: 20px;
+    text-align: center;
+    padding: 15px;
+}
+
+.create-school-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s ease;
+}
+
+.create-school-link a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+

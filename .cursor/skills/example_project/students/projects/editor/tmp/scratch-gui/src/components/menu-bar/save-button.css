@@ -1,0 +1,19 @@
+@import "../../css/colors.css";
+
+.save-button {
+    background: $motion-primary;
+    transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+    background: $motion-tertiary;
+}
+
+.save-button-success {
+    background: #14A15B !important; /* success-color */
+}
+
+.save-button-success:hover {
+    background: #0d7a45 !important;
+}
+

@@ -1,0 +1,1191 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  student
+  teacher
+  admin
+}
+
+enum ProfileVisibility {
+  public
+  class
+  private
+}
+
+enum PreferredTitle {
+  Herr
+  Frau
+  Divers
+}
+
+enum SchoolStatus {
+  active
+  pending_approval
+  waitlist
+}
+
+enum SchoolType {
+  AHS
+  MS
+  VS
+}
+
+enum AustrianState {
+  Burgenland
+  Kaernten
+  Niederosterreich
+  Oberosterreich
+  Salzburg
+  Steiermark
+  Tirol
+  Vorarlberg
+  Wien
+}
+
+enum PaymentMethod {
+  license
+  sponsor
+  invoice
+  uew
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  free
+}
+
+enum ClassTeacherRole {
+  primary
+  co_teacher
+}
+
+enum CourseStatus {
+  draft
+  active
+  archived
+}
+
+enum DifficultyLevel {
+  beginner
+  intermediate
+  advanced
+  expert
+}
+
+enum LessonStatus {
+  draft
+  active
+  archived
+}
+
+enum FileType {
+  pdf
+  image
+  document
+}
+
+enum QuestionType {
+  multiple_choice_single
+  multiple_choice_multiple
+  true_false
+  fill_blank
+  drag_drop
+}
+
+enum ProjectStatus {
+  draft
+  submitted_for_review
+  published
+  archived
+  rejected
+}
+
+enum ProjectVisibility {
+  public
+  class
+  private
+}
+
+enum AssetType {
+  image
+  sound
+  costume
+  sprite
+}
+
+enum OrganizerType {
+  sponsor
+  state
+  platform
+}
+
+enum RegionType {
+  all
+  state
+  regional
+}
+
+enum ChallengeStatus {
+  upcoming
+  active
+  ended
+  results_published
+}
+
+enum SubmissionStatus {
+  submitted
+  reviewed
+  winner
+  finalist
+}
+
+enum CertificateType {
+  course_completion
+  challenge_winner
+  milestone
+  special
+  participation
+}
+
+enum AwardType {
+  automatic
+  manual
+}
+
+enum TransactionType {
+  earn
+  spend
+}
+
+enum SourceType {
+  lesson
+  quiz
+  project
+  challenge
+  shop
+  milestone
+  manual
+}
+
+enum ShopItemType {
+  avatar_frame
+  profile_background
+  badge
+  title
+  effect
+}
+
+enum ConversationType {
+  direct
+  class
+  group
+}
+
+enum MessageType {
+  text
+  file
+  system
+}
+
+enum NotificationType {
+  info
+  success
+  warning
+  error
+  project
+  challenge
+  course
+  message
+}
+
+enum RelatedType {
+  project
+  challenge
+  course
+  message
+  certificate
+}
+
+model User {
+  // Primary Key
+  id String @id @default(uuid())
+
+  // Basis-Informationen
+  firstName      String          @map("first_name") @db.VarChar(100)
+  lastName       String          @map("last_name") @db.VarChar(100)
+  preferredTitle PreferredTitle? @map("preferred_title")
+  email          String?         @unique @db.VarChar(255)
+  phone          String?         @db.VarChar(20)
+
+  // Rolle & Berechtigungen
+  role     UserRole @default(student)
+  isActive Boolean  @default(true) @map("is_active")
+
+  // Authentifizierung (Teacher/Admin)
+  username         String? @unique @db.VarChar(100)
+  passwordHash     String? @map("password_hash") @db.Text
+  passwordMigrated Boolean @default(false) @map("password_migrated")
+  passwordHashWp   String? @map("password_hash_wp") @db.Text
+
+  // Schülerpasswort (nur für Studenten)
+  studentPasswordHash  String? @unique @map("student_password_hash") @db.Text
+  studentPasswordPlain String? @map("student_password_plain") @db.Text
+
+  // Profil
+  avatarId          String?           @map("avatar_id") @db.VarChar(100)
+  bio               String?           @db.Text
+  profileVisibility ProfileVisibility @default(public) @map("profile_visibility")
+
+  // Schule & Klasse (für Schüler) - Optional für jetzt
+  schoolId String? @map("school_id")
+  classId  String? @map("class_id")
+
+  // Gamification
+  tCoinsTotal     Int      @default(0) @map("t_coins_total")
+  tCoinsAvailable Int      @default(0) @map("t_coins_available")
+  tScore          Decimal? @map("t_score") @db.Decimal(10, 2)
+
+  // Timestamps
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  lastLoginAt       DateTime? @map("last_login_at")
+  passwordChangedAt DateTime? @map("password_changed_at")
+
+  // WordPress Migration
+  wpUserId     Int?      @map("wp_user_id")
+  wpMigratedAt DateTime? @map("wp_migrated_at")
+
+  // Relations
+  school                    School?               @relation("SchoolTeachers", fields: [schoolId], references: [id])
+  class                     Class?                @relation("ClassStudents", fields: [classId], references: [id])
+  projects                  Project[]             @relation("ProjectAuthor")
+  projectVersions           ProjectVersion[]
+  reviewedProjects          Project[]             @relation("ProjectReviewedBy")
+  certificates              UserCertificate[]
+  awardedCertificates       UserCertificate[]     @relation("CertificateAwardedBy")
+  tCoinsTransactions        TCoinsTransaction[]
+  messagesSent              Message[]             @relation("MessageSender")
+  messageRecipients         MessageRecipient[]    @relation("MessageRecipient")
+  conversationsParticipant1 Conversation[]        @relation("ConversationParticipant1")
+  conversationsParticipant2 Conversation[]        @relation("ConversationParticipant2")
+  classTeachers             ClassTeacher[]
+  classPrimaryTeacher       Class[]               @relation("ClassPrimaryTeacher")
+  approvedSchools           School[]              @relation("SchoolApprovedBy")
+  notifications             Notification[]
+  quizSubmissions           QuizSubmission[]
+  challengeSubmissions      ChallengeSubmission[]
+  shopItems                 UserShopItem[]
+  calendlyAttendeesUpdated  CalendlyEventAttendee[] @relation("CalendlyAttendeeUpdatedBy")
+  calendlyAttendees         CalendlyEventAttendee[] @relation("CalendlyAttendeeUser")
+  teacherStatusHistory      TeacherStatusHistory[]  @relation("TeacherStatusHistory")
+  teacherStatusChangedBy     TeacherStatusHistory[]  @relation("TeacherStatusChangedBy")
+  forderungApprovals        TeacherForderungApproval[] @relation("TeacherForderungApproval")
+  forderungApprovedBy       TeacherForderungApproval[] @relation("ForderungApprovedBy")
+
+  @@index([email])
+  @@index([username])
+  @@index([studentPasswordHash])
+  @@index([role])
+  @@index([schoolId])
+  @@index([classId])
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model School {
+  id                        String        @id @default(uuid())
+  name                      String        @db.VarChar(255)
+  schoolType                SchoolType?   @map("school_type")
+  skz                       String?       @unique @db.VarChar(20)
+  isPrivate                 Boolean       @default(false) @map("is_private")
+  street                    String        @db.VarChar(255)
+  postalCode                String        @map("postal_code") @db.VarChar(10)
+  city                      String        @db.VarChar(100)
+  state                     AustrianState
+  nonNativeGermanPercentage Decimal?      @map("non_native_german_percentage") @db.Decimal(5, 2)
+  estimatedClasses          Int?          @map("estimated_classes")
+  estimatedTeachers         Int?          @map("estimated_teachers")
+  status                    SchoolStatus  @default(pending_approval)
+  schoolCode                String?       @unique @map("school_code") @db.VarChar(20)
+  freeLicensesEnabled       Boolean       @default(false) @map("free_licenses_enabled")
+  sponsorId                 String?       @map("sponsor_id")
+  notes                     String?       @db.Text
+  createdAt                 DateTime      @default(now()) @map("created_at")
+  updatedAt                 DateTime      @updatedAt @map("updated_at")
+  approvedAt                DateTime?     @map("approved_at")
+  approvedById              String?       @map("approved_by")
+
+  // Relations
+  teachers   User[]  @relation("SchoolTeachers")
+  classes    Class[]
+  approvedBy User?   @relation("SchoolApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([status])
+  @@index([state])
+  @@index([schoolCode])
+  @@index([skz])
+  @@index([createdAt])
+  @@map("schools")
+}
+
+model SchoolYear {
+  id        String   @id @default(uuid())
+  name      String   @db.VarChar(100)
+  startDate DateTime @map("start_date")
+  endDate   DateTime @map("end_date")
+  isActive  Boolean  @default(false) @map("is_active")
+  isCurrent Boolean  @default(false) @map("is_current")
+
+  // Relations
+  classes             Class[]
+  tCoinsTransactions TCoinsTransaction[]
+  classCoursePackages ClassCoursePackage[]
+  forderungApprovals  TeacherForderungApproval[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([startDate])
+  @@index([endDate])
+  @@index([isActive])
+  @@index([isCurrent])
+  @@map("school_years")
+}
+
+model Class {
+  id                     String         @id @default(uuid())
+  name                   String         @db.VarChar(100)
+  grade                  String?        @db.VarChar(20)
+  designation            String?        @db.VarChar(10)
+  schoolId               String         @map("school_id")
+  schoolYearId           String         @map("school_year_id")
+  primaryTeacherId       String         @map("primary_teacher_id")
+  estimatedStudents      Int?           @map("estimated_students")
+  paymentMethod          PaymentMethod? @map("payment_method")
+  paymentStatus          PaymentStatus? @map("payment_status")
+  createdAt              DateTime       @default(now()) @map("created_at")
+  updatedAt              DateTime       @updatedAt @map("updated_at")
+  transferredFromClassId String?        @map("transferred_from_class_id")
+
+  // Relations
+  school               School               @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolYear           SchoolYear           @relation(fields: [schoolYearId], references: [id])
+  primaryTeacher       User                 @relation("ClassPrimaryTeacher", fields: [primaryTeacherId], references: [id])
+  students             User[]               @relation("ClassStudents")
+  teachers             ClassTeacher[]
+  coursePackages       ClassCoursePackage[]
+  projects             Project[]
+  conversations        Conversation[]
+  transferredFromClass Class?               @relation("ClassTransfer", fields: [transferredFromClassId], references: [id])
+  transferredClasses   Class[]              @relation("ClassTransfer")
+
+  @@index([schoolId])
+  @@index([schoolYearId])
+  @@index([primaryTeacherId])
+  @@index([name])
+  @@index([createdAt])
+  @@map("classes")
+}
+
+model ClassTeacher {
+  id        String           @id @default(uuid())
+  classId   String           @map("class_id")
+  teacherId String           @map("teacher_id")
+  role      ClassTeacherRole @default(co_teacher)
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher User  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, teacherId])
+  @@index([classId])
+  @@index([teacherId])
+  @@map("class_teachers")
+}
+
+model Course {
+  id                String           @id @default(uuid())
+  title             String           @db.VarChar(255)
+  description       String           @db.Text
+  thumbnailUrl      String?          @map("thumbnail_url") @db.Text
+  category          String?          @db.VarChar(100)
+  difficultyLevel   DifficultyLevel? @map("difficulty_level")
+  estimatedDuration Int?             @map("estimated_duration")
+  status            CourseStatus     @default(draft)
+  isPublished       Boolean          @default(false) @map("is_published")
+  orderIndex        Int              @default(0) @map("order_index")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  modules        CourseModule[]
+  lessons        CourseLesson[]
+  coursePackages CoursePackageCourse[]
+  certificates   Certificate[]
+
+  @@index([status])
+  @@index([category])
+  @@index([difficultyLevel])
+  @@index([orderIndex])
+  @@index([createdAt])
+  @@map("courses")
+}
+
+model CourseModule {
+  id          String   @id @default(uuid())
+  courseId    String   @map("course_id")
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  orderIndex  Int      @default(0) @map("order_index")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  course  Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons CourseLesson[]
+
+  @@index([courseId])
+  @@index([orderIndex])
+  @@map("course_modules")
+}
+
+model CourseLesson {
+  id         String   @id @default(uuid())
+  courseId   String   @map("course_id")
+  lessonId   String   @map("lesson_id")
+  moduleId   String?  @map("module_id")
+  orderIndex Int      @default(0) @map("order_index")
+  isRequired Boolean  @default(true) @map("is_required")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  course Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  module CourseModule? @relation(fields: [moduleId], references: [id])
+
+  @@unique([courseId, lessonId])
+  @@index([courseId])
+  @@index([lessonId])
+  @@index([moduleId])
+  @@index([orderIndex])
+  @@map("course_lessons")
+}
+
+model Lesson {
+  id            String       @id @default(uuid())
+  title         String       @db.VarChar(255)
+  description   String?      @db.Text
+  videoUrl      String?      @map("video_url") @db.Text
+  videoDuration Int?         @map("video_duration")
+  subtitleUrl   String?      @map("subtitle_url") @db.Text
+  flashcardData Json?        @map("flashcard_data") @db.JsonB
+  content       String?      @db.Text
+  status        LessonStatus @default(draft)
+  isPublished   Boolean      @default(false) @map("is_published")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  courseLessons CourseLesson[]
+  flashcards    Flashcard[]
+  materials     LessonMaterial[]
+  quizzes       Quiz[]
+
+  @@index([status])
+  @@index([isPublished])
+  @@index([createdAt])
+  @@map("lessons")
+}
+
+model Flashcard {
+  id         String   @id @default(uuid())
+  lessonId   String   @map("lesson_id")
+  front      String   @db.Text
+  back       String   @db.Text
+  imageUrl   String?  @map("image_url") @db.Text
+  orderIndex Int      @default(0) @map("order_index")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@index([orderIndex])
+  @@map("lesson_flashcards")
+}
+
+model LessonMaterial {
+  id         String   @id @default(uuid())
+  lessonId   String   @map("lesson_id")
+  fileName   String   @map("file_name") @db.VarChar(255)
+  fileUrl    String   @map("file_url") @db.Text
+  fileType   FileType @map("file_type")
+  fileSize   Int      @map("file_size")
+  orderIndex Int      @default(0) @map("order_index")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+  @@index([fileType])
+  @@map("lesson_materials")
+}
+
+model Quiz {
+  id                      String   @id @default(uuid())
+  lessonId                String   @map("lesson_id")
+  title                   String   @db.VarChar(255)
+  description             String?  @db.Text
+  minimumScore            Decimal  @default(70.00) @map("minimum_score") @db.Decimal(5, 2)
+  timeLimit               Int?     @map("time_limit")
+  showFeedbackImmediately Boolean  @default(false) @map("show_feedback_immediately")
+  isActive                Boolean  @default(true) @map("is_active")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  lesson      Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions   QuizQuestion[]
+  submissions QuizSubmission[]
+
+  @@index([lessonId])
+  @@index([isActive])
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id           String       @id @default(uuid())
+  quizId       String       @map("quiz_id")
+  questionType QuestionType @map("question_type")
+  questionText String       @map("question_text") @db.Text
+  points       Decimal      @default(1.00) @db.Decimal(5, 2)
+  explanation  String?      @db.Text
+  orderIndex   Int          @default(0) @map("order_index")
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  // Relations
+  quiz              Quiz                   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers           QuizAnswer[]
+  submissionAnswers QuizSubmissionAnswer[]
+
+  @@index([quizId])
+  @@index([orderIndex])
+  @@map("quiz_questions")
+}
+
+model QuizAnswer {
+  id         String   @id @default(uuid())
+  questionId String   @map("question_id")
+  answerText String   @map("answer_text") @db.Text
+  isCorrect  Boolean  @default(false) @map("is_correct")
+  orderIndex Int      @default(0) @map("order_index")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  question QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@index([orderIndex])
+  @@map("quiz_answers")
+}
+
+model QuizSubmission {
+  id           String   @id @default(uuid())
+  quizId       String   @map("quiz_id")
+  userId       String   @map("user_id")
+  score        Decimal  @db.Decimal(5, 2)
+  totalPoints  Decimal  @map("total_points") @db.Decimal(5, 2)
+  earnedPoints Decimal  @map("earned_points") @db.Decimal(5, 2)
+  passed       Boolean
+  timeTaken    Int?     @map("time_taken")
+  startedAt    DateTime @map("started_at")
+  submittedAt  DateTime @map("submitted_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  quiz    Quiz                   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user    User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers QuizSubmissionAnswer[]
+
+  @@index([quizId])
+  @@index([userId])
+  @@index([submittedAt])
+  @@map("quiz_submissions")
+}
+
+model QuizSubmissionAnswer {
+  id           String   @id @default(uuid())
+  submissionId String   @map("submission_id")
+  questionId   String   @map("question_id")
+  answerIds    String[] @map("answer_ids")
+  answerText   String?  @map("answer_text") @db.Text
+  isCorrect    Boolean  @map("is_correct")
+  pointsEarned Decimal  @default(0.00) @map("points_earned") @db.Decimal(5, 2)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  submission QuizSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  question   QuizQuestion   @relation(fields: [questionId], references: [id])
+
+  @@index([submissionId])
+  @@index([questionId])
+  @@map("quiz_submission_answers")
+}
+
+model CoursePackage {
+  id               String   @id @default(uuid())
+  title            String   @db.VarChar(255)
+  description      String?  @db.Text
+  thumbnailUrl     String?  @map("thumbnail_url") @db.Text
+  licenseCount     Int      @default(0) @map("license_count")
+  freeLicenseCount Int      @default(0) @map("free_license_count")
+  pricePerStudent  Decimal? @map("price_per_student") @db.Decimal(10, 2)
+  currency         String   @default("EUR") @db.VarChar(10)
+  isActive         Boolean  @default(true) @map("is_active")
+  isAvailable      Boolean  @default(true) @map("is_available")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  courses       CoursePackageCourse[]
+  classPackages ClassCoursePackage[]
+
+  @@index([isActive])
+  @@index([isAvailable])
+  @@map("course_packages")
+}
+
+model CoursePackageCourse {
+  id              String   @id @default(uuid())
+  coursePackageId String   @map("course_package_id")
+  courseId        String   @map("course_id")
+  orderIndex      Int      @default(0) @map("order_index")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  coursePackage CoursePackage @relation(fields: [coursePackageId], references: [id], onDelete: Cascade)
+  course        Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([coursePackageId, courseId])
+  @@index([coursePackageId])
+  @@index([courseId])
+  @@index([orderIndex])
+  @@map("course_package_courses")
+}
+
+model ClassCoursePackage {
+  id              String   @id @default(uuid())
+  classId         String   @map("class_id")
+  coursePackageId String   @map("course_package_id")
+  schoolYearId    String   @map("school_year_id")
+  licenseCount    Int      @default(0) @map("license_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relations
+  class         Class         @relation(fields: [classId], references: [id], onDelete: Cascade)
+  coursePackage CoursePackage @relation(fields: [coursePackageId], references: [id])
+  schoolYear    SchoolYear    @relation(fields: [schoolYearId], references: [id])
+
+  @@unique([classId, coursePackageId, schoolYearId])
+  @@index([classId])
+  @@index([coursePackageId])
+  @@map("class_course_packages")
+}
+
+model Project {
+  id                      String            @id @default(uuid())
+  title                   String            @db.VarChar(255)
+  description             String?           @db.Text
+  instructions            String?           @db.Text
+  credits                 String?           @db.Text
+  status                  ProjectStatus     @default(draft)
+  visibility              ProjectVisibility @default(private)
+  scratchData             Json              @map("scratch_data") @db.JsonB
+  version                 Int               @default(1)
+  authorId                String            @map("author_id")
+  classId                 String?           @map("class_id")
+  schoolId                String?           @map("school_id")
+  publishedAt             DateTime?         @map("published_at")
+  reviewedAt              DateTime?         @map("reviewed_at")
+  reviewedById            String?           @map("reviewed_by")
+  reviewNotes             String?           @map("review_notes") @db.Text
+  thumbnailUrl            String?           @map("thumbnail_url") @db.Text
+  thumbnailAssetId        String?           @map("thumbnail_asset_id") @db.VarChar(255)
+  tags                    String[]
+  viewCount               Int               @default(0) @map("view_count")
+  likeCount               Int               @default(0) @map("like_count")
+  remixCount              Int               @default(0) @map("remix_count")
+  challengeId             String?           @map("challenge_id")
+  challengeSubmissionDate DateTime?         @map("challenge_submission_date")
+  createdAt               DateTime          @default(now()) @map("created_at")
+  updatedAt               DateTime          @updatedAt @map("updated_at")
+  lastSavedAt             DateTime?         @map("last_saved_at")
+
+  // Relations
+  author               User                  @relation("ProjectAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  class                Class?                @relation(fields: [classId], references: [id])
+  reviewedBy           User?                 @relation("ProjectReviewedBy", fields: [reviewedById], references: [id])
+  challenge            Challenge?            @relation(fields: [challengeId], references: [id])
+  versions             ProjectVersion[]
+  assets               Asset[]
+  challengeSubmissions ChallengeSubmission[]
+
+  @@index([authorId])
+  @@index([classId])
+  @@index([schoolId])
+  @@index([status])
+  @@index([visibility])
+  @@index([challengeId])
+  @@index([publishedAt])
+  @@index([createdAt])
+  @@map("projects")
+}
+
+model ProjectVersion {
+  id            String   @id @default(uuid())
+  projectId     String   @map("project_id")
+  version       Int
+  scratchData   Json     @map("scratch_data") @db.JsonB
+  changes       String?  @db.Text
+  changeSummary Json?    @map("change_summary") @db.JsonB
+  authorId      String   @map("author_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id])
+
+  @@unique([projectId, version])
+  @@index([projectId])
+  @@index([version])
+  @@index([createdAt])
+  @@map("project_versions")
+}
+
+model Asset {
+  id        String    @id @default(uuid())
+  projectId String    @map("project_id")
+  assetId   String    @map("asset_id") @db.VarChar(255)
+  name      String    @db.VarChar(255)
+  type      AssetType
+  format    String?   @db.VarChar(20)
+  url       String    @db.Text
+  s3Key     String    @map("s3_key") @db.Text
+  bucket    String    @default("scratch-assets") @db.VarChar(100)
+  size      Int
+  width     Int?
+  height    Int?
+  duration  Int?
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([assetId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("assets")
+}
+
+model Challenge {
+  id                 String          @id @default(uuid())
+  title              String          @db.VarChar(255)
+  description        String          @db.Text
+  challengeId        String?         @unique @map("challenge_id") @db.VarChar(50)
+  thumbnailUrl       String?         @map("thumbnail_url") @db.Text
+  organizerType      OrganizerType   @map("organizer_type")
+  organizerId        String?         @map("organizer_id")
+  sponsorId          String?         @map("sponsor_id")
+  state              String?         @db.VarChar(50)
+  startDate          DateTime        @map("start_date")
+  endDate            DateTime        @map("end_date")
+  resultsDate        DateTime?       @map("results_date")
+  regionType         RegionType      @default(all) @map("region_type")
+  regionStates       String[]        @map("region_states")
+  regionDescription  String?         @map("region_description") @db.Text
+  criteria           Json            @db.JsonB
+  projectType        String?         @map("project_type") @db.VarChar(50)
+  evaluationCriteria String?         @map("evaluation_criteria") @db.Text
+  juryCount          Int?            @map("jury_count")
+  status             ChallengeStatus @default(upcoming)
+  isPublic           Boolean         @default(true) @map("is_public")
+  prizes             Json?           @db.JsonB
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  submissions ChallengeSubmission[]
+  projects    Project[]
+
+  @@index([organizerType])
+  @@index([sponsorId])
+  @@index([state])
+  @@index([status])
+  @@index([startDate])
+  @@index([endDate])
+  @@index([challengeId])
+  @@map("challenges")
+}
+
+model ChallengeSubmission {
+  id          String           @id @default(uuid())
+  challengeId String           @map("challenge_id")
+  projectId   String           @map("project_id")
+  userId      String           @map("user_id")
+  schoolId    String?          @map("school_id")
+  classId     String?          @map("class_id")
+  status      SubmissionStatus @default(submitted)
+  rank        Int?
+  score       Decimal?         @db.Decimal(10, 2)
+  juryScores  Json?            @map("jury_scores") @db.JsonB
+  submittedAt DateTime         @default(now()) @map("submitted_at")
+  reviewedAt  DateTime?        @map("reviewed_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, projectId])
+  @@index([challengeId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([status])
+  @@index([rank])
+  @@index([submittedAt])
+  @@map("challenge_submissions")
+}
+
+model Certificate {
+  id              String          @id @default(uuid())
+  title           String          @db.VarChar(255)
+  description     String?         @db.Text
+  certificateType CertificateType @map("certificate_type")
+  templateId      String?         @map("template_id") @db.VarChar(100)
+  designConfig    Json?           @map("design_config") @db.JsonB
+  courseId        String?         @map("course_id")
+  challengeId     String?         @map("challenge_id")
+  awardType       AwardType       @map("award_type")
+  awardTrigger    String?         @map("award_trigger") @db.VarChar(50)
+  awardConditions Json?           @map("award_conditions") @db.JsonB
+  isActive        Boolean         @default(true) @map("is_active")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  course           Course?           @relation(fields: [courseId], references: [id])
+  userCertificates UserCertificate[]
+
+  @@index([certificateType])
+  @@index([awardType])
+  @@index([courseId])
+  @@index([challengeId])
+  @@index([isActive])
+  @@map("certificates")
+}
+
+model UserCertificate {
+  id             String    @id @default(uuid())
+  certificateId  String    @map("certificate_id")
+  userId         String    @map("user_id")
+  awardedById    String?   @map("awarded_by")
+  awardReason    String?   @map("award_reason") @db.Text
+  pdfUrl         String?   @map("pdf_url") @db.Text
+  pdfGeneratedAt DateTime? @map("pdf_generated_at")
+  awardedAt      DateTime  @default(now()) @map("awarded_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  certificate Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  awardedBy   User?       @relation("CertificateAwardedBy", fields: [awardedById], references: [id])
+
+  @@unique([certificateId, userId])
+  @@index([certificateId])
+  @@index([userId])
+  @@index([awardedAt])
+  @@map("user_certificates")
+}
+
+model TCoinsTransaction {
+  id                String          @id @default(uuid())
+  userId            String          @map("user_id")
+  schoolYearId      String          @map("school_year_id")
+  transactionType   TransactionType @map("transaction_type")
+  amount            Int
+  balanceAfter      Int             @map("balance_after")
+  sourceType        SourceType      @map("source_type")
+  sourceId          String?         @map("source_id")
+  sourceDescription String?         @map("source_description") @db.Text
+  shopItemId        String?         @map("shop_item_id")
+  createdAt         DateTime        @default(now()) @map("created_at")
+
+  // Relations
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  schoolYear SchoolYear @relation(fields: [schoolYearId], references: [id])
+  shopItem   ShopItem?  @relation(fields: [shopItemId], references: [id])
+
+  @@index([userId])
+  @@index([schoolYearId])
+  @@index([transactionType])
+  @@index([sourceType])
+  @@index([createdAt])
+  @@map("t_coins_transactions")
+}
+
+model ShopItem {
+  id          String       @id @default(uuid())
+  name        String       @db.VarChar(255)
+  description String?      @db.Text
+  itemType    ShopItemType @map("item_type")
+  imageUrl    String?      @map("image_url") @db.Text
+  price       Int
+  isActive    Boolean      @default(true) @map("is_active")
+  isLimited   Boolean      @default(false) @map("is_limited")
+  stockCount  Int?         @map("stock_count")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  transactions  TCoinsTransaction[]
+  userShopItems UserShopItem[]
+
+  @@index([itemType])
+  @@index([isActive])
+  @@index([price])
+  @@map("shop_items")
+}
+
+model UserShopItem {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  shopItemId  String   @map("shop_item_id")
+  purchasedAt DateTime @default(now()) @map("purchased_at")
+  isActive    Boolean  @default(true) @map("is_active")
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopItem ShopItem @relation(fields: [shopItemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, shopItemId])
+  @@index([userId])
+  @@index([shopItemId])
+  @@map("user_shop_items")
+}
+
+model Conversation {
+  id               String           @id @default(uuid())
+  participant1Id   String           @map("participant_1_id")
+  participant2Id   String?          @map("participant_2_id")
+  classId          String?          @map("class_id")
+  conversationType ConversationType @map("conversation_type")
+  isActive         Boolean          @default(true) @map("is_active")
+  lastMessageAt    DateTime?        @map("last_message_at")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  // Relations
+  participant1 User      @relation("ConversationParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2 User?     @relation("ConversationParticipant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  class        Class?    @relation(fields: [classId], references: [id])
+  messages     Message[]
+
+  @@index([participant1Id])
+  @@index([participant2Id])
+  @@index([classId])
+  @@index([lastMessageAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             String      @id @default(uuid())
+  conversationId String      @map("conversation_id")
+  senderId       String      @map("sender_id")
+  content        String      @db.Text
+  messageType    MessageType @default(text) @map("message_type")
+  fileUrl        String?     @map("file_url") @db.Text
+  fileName       String?     @map("file_name") @db.VarChar(255)
+  fileType       String?     @map("file_type") @db.VarChar(50)
+  fileSize       Int?        @map("file_size")
+  isRead         Boolean     @default(false) @map("is_read")
+  readAt         DateTime?   @map("read_at")
+  createdAt      DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  conversation Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User               @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipients   MessageRecipient[]
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+model MessageRecipient {
+  id          String    @id @default(uuid())
+  messageId   String    @map("message_id")
+  recipientId String    @map("recipient_id")
+  isRead      Boolean   @default(false) @map("is_read")
+  readAt      DateTime? @map("read_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  recipient User    @relation("MessageRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, recipientId])
+  @@index([messageId])
+  @@index([recipientId])
+  @@index([isRead])
+  @@map("message_recipients")
+}
+
+model Notification {
+  id               String           @id @default(uuid())
+  userId           String           @map("user_id")
+  title            String           @db.VarChar(255)
+  message          String           @db.Text
+  notificationType NotificationType @map("notification_type")
+  relatedType      RelatedType?     @map("related_type")
+  relatedId        String?          @map("related_id")
+  isRead           Boolean          @default(false) @map("is_read")
+  readAt           DateTime?        @map("read_at")
+  sentInApp        Boolean          @default(true) @map("sent_in_app")
+  sentEmail        Boolean          @default(false) @map("sent_email")
+  sentPush         Boolean          @default(false) @map("sent_push")
+  emailSentAt      DateTime?        @map("email_sent_at")
+  pushSentAt       DateTime?        @map("push_sent_at")
+  createdAt        DateTime         @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([notificationType])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model CalendlyEvent {
+  id String @id @default(uuid())
+  calendlyId String @unique @map("calendly_id") @db.VarChar(100)
+  eventName String @map("event_name") @db.VarChar(255)
+  startTime DateTime @map("start_time")
+  status String @default("active") @db.VarChar(50)
+  location String? @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  attendees CalendlyEventAttendee[]
+
+  @@map("calendly_events")
+  @@index([eventName])
+  @@index([startTime])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model CalendlyEventAttendee {
+  id String @id @default(uuid())
+  eventId String @map("event_id")
+  name String @db.VarChar(255)
+  email String @db.VarChar(255)
+  attended Boolean? // NULL = pending, true = attended, false = not attended
+  updatedByUserId String? @map("updated_by_user_id")
+  userId String? @map("user_id")
+  prognosisClassCount Int? @map("prognosis_class_count")
+  prognosisStart String? @map("prognosis_start") @db.VarChar(255)
+  notes String? @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  event CalendlyEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  updatedBy User? @relation("CalendlyAttendeeUpdatedBy", fields: [updatedByUserId], references: [id])
+  user User? @relation("CalendlyAttendeeUser", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([eventId, email])
+  @@map("calendly_event_attendees")
+  @@index([eventId])
+  @@index([attended])
+  @@index([updatedByUserId])
+  @@index([userId])
+}
+
+model TeacherStatus {
+  id Int @id @default(autoincrement())
+  order Int
+  label String? @db.VarChar(45)
+  displayName String? @map("display_name") @db.VarChar(100)
+  description String? @db.Text
+
+  // Relations
+  history TeacherStatusHistory[]
+
+  @@map("teacher_stati")
+  @@index([order])
+  @@index([label])
+}
+
+model TeacherStatusHistory {
+  id String @id @default(uuid())
+  teacherId String @map("teacher_id")
+  statusId Int @map("status_id")
+  previousStatusId Int? @map("previous_status_id")
+  changedAt DateTime @default(now()) @map("changed_at")
+  changedById String? @map("changed_by")
+
+  // Relations
+  teacher User @relation("TeacherStatusHistory", fields: [teacherId], references: [id], onDelete: Cascade)
+  status TeacherStatus @relation(fields: [statusId], references: [id])
+  changedBy User? @relation("TeacherStatusChangedBy", fields: [changedById], references: [id])
+
+  @@map("teacher_status_history")
+  @@index([teacherId])
+  @@index([statusId])
+  @@index([changedAt])
+}
+
+model TeacherForderungApproval {
+  id String @id @default(uuid())
+  teacherId String @map("teacher_id")
+  schoolYearId String @map("school_year_id")
+  approved Boolean @default(false)
+  approvedById String? @map("approved_by")
+  approvedAt DateTime? @map("approved_at")
+  notes String? @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  teacher User @relation("TeacherForderungApproval", fields: [teacherId], references: [id], onDelete: Cascade)
+  schoolYear SchoolYear @relation(fields: [schoolYearId], references: [id])
+  approvedBy User? @relation("ForderungApprovedBy", fields: [approvedById], references: [id])
+
+  @@unique([teacherId, schoolYearId])
+  @@map("teacher_forderung_approvals")
+  @@index([teacherId])
+  @@index([schoolYearId])
+  @@index([approved])
+}

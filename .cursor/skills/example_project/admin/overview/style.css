@@ -1,0 +1,475 @@
+/* Übersichts-Seite Styling */
+.overview-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 160px);
+}
+
+.overview-header {
+    margin-bottom: 30px;
+}
+
+.overview-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: var(--primary-color, #333);
+}
+
+/* Visualisierungs-Auswahl */
+.visualization-selector {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.visualization-selector h2 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    color: var(--primary-color, #333);
+}
+
+.visualization-boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.visualization-box {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.visualization-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color, #007bff);
+}
+
+.visualization-box.active {
+    background: linear-gradient(135deg, var(--primary-color, #007bff) 0%, #0056b3 100%);
+    color: white;
+    border-color: var(--primary-color, #007bff);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+}
+
+.visualization-box.active .box-icon,
+.visualization-box.active .box-title,
+.visualization-box.active .box-description {
+    color: white;
+}
+
+.box-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: var(--primary-color, #007bff);
+    transition: transform 0.3s ease;
+}
+
+.visualization-box:hover .box-icon {
+    transform: scale(1.1);
+}
+
+.box-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary-color, #333);
+}
+
+.box-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Visualisierungsbereich */
+.visualization-area {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    min-height: 600px;
+}
+
+.visualization-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+}
+
+.loading-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 600px;
+    color: #666;
+    font-size: 16px;
+}
+
+.loading-message i {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: var(--primary-color, #007bff);
+}
+
+/* Datenbank-Schema Visualisierung */
+#database-schema-viz {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    position: relative;
+    overflow: auto;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.schema-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.schema-controls button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.schema-controls button:hover {
+    background: #f0f0f0;
+    border-color: var(--primary-color, #007bff);
+}
+
+.schema-controls button.active {
+    background: var(--primary-color, #007bff);
+    color: white;
+    border-color: var(--primary-color, #007bff);
+}
+
+.schema-legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* SVG Styling für Schema */
+.schema-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.table-node {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.table-node:hover {
+    filter: brightness(1.1);
+}
+
+.table-rect {
+    fill: white;
+    stroke: #333;
+    stroke-width: 2;
+    rx: 6;
+}
+
+.table-header {
+    fill: var(--primary-color, #007bff);
+    stroke: #333;
+    stroke-width: 2;
+}
+
+.table-title {
+    font-weight: 600;
+    font-size: 14px;
+    fill: white;
+}
+
+.table-column {
+    font-size: 12px;
+    fill: #333;
+}
+
+.foreign-key-line {
+    stroke: #666;
+    stroke-width: 2;
+    fill: none;
+    marker-end: url(#arrowhead);
+}
+
+.foreign-key-line:hover {
+    stroke: var(--primary-color, #007bff);
+    stroke-width: 3;
+}
+
+.table-node.selected .table-rect {
+    stroke: var(--primary-color, #007bff);
+    stroke-width: 3;
+}
+
+.table-node.selected .table-header {
+    fill: #0056b3;
+}
+
+/* Tooltip */
+.schema-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.schema-tooltip h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.schema-tooltip p {
+    margin: 4px 0;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+/* API-Tabellen-Zugriffe Visualisierung */
+.api-viz-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+}
+
+.api-viz-legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.legend-color.api-color {
+    background: #007bff;
+}
+
+.legend-color.table-color {
+    background: #28a745;
+}
+
+.legend-line {
+    width: 30px;
+    height: 3px;
+    margin-top: 8px;
+}
+
+.legend-line.select-line {
+    background: #28a745;
+}
+
+.legend-line.insert-line {
+    background: #007bff;
+}
+
+.legend-line.update-line {
+    background: #ffc107;
+}
+
+.legend-line.delete-line {
+    background: #dc3545;
+}
+
+#api-table-viz {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    position: relative;
+    overflow: auto;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.api-table-svg {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+}
+
+.api-node {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.api-node:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+.api-node.selected .api-rect {
+    stroke: #ffc107;
+    stroke-width: 3;
+}
+
+.api-rect {
+    fill: #007bff;
+    stroke: #0056b3;
+    stroke-width: 2;
+}
+
+.api-title {
+    font-weight: 600;
+    font-size: 12px;
+    fill: white;
+}
+
+.api-category {
+    font-size: 10px;
+    fill: white;
+    opacity: 0.9;
+}
+
+.api-method {
+    font-size: 9px;
+    fill: white;
+    opacity: 0.8;
+}
+
+.table-node-viz {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.table-node-viz:hover {
+    filter: brightness(1.1);
+    transform: scale(1.05);
+}
+
+.table-node-viz.selected .table-rect-viz {
+    stroke: #ffc107;
+    stroke-width: 3;
+}
+
+.table-rect-viz {
+    fill: #28a745;
+    stroke: #1e7e34;
+    stroke-width: 2;
+}
+
+.table-title-viz {
+    font-weight: 600;
+    font-size: 13px;
+    fill: white;
+}
+
+.access-line {
+    transition: all 0.2s ease;
+}
+
+.access-line:hover {
+    opacity: 1 !important;
+    stroke-width: 3 !important;
+}
+
+.select-line {
+    stroke: #28a745;
+}
+
+.insert-line {
+    stroke: #007bff;
+}
+
+.update-line {
+    stroke: #ffc107;
+}
+
+.delete-line {
+    stroke: #dc3545;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .visualization-boxes {
+        grid-template-columns: 1fr;
+    }
+    
+    .schema-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .schema-controls button {
+        width: 100%;
+    }
+    
+    .api-viz-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+}
+

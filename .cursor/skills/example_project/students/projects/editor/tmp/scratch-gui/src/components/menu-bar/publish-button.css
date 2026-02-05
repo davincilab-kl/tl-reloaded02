@@ -1,0 +1,15 @@
+@import "../../css/colors.css";
+
+.publish-button {
+    background: $data-primary;
+}
+
+.publish-button:hover {
+    background: $red-tertiary;
+}
+
+.publish-button-is-published {
+    background: $ui-black-transparent;
+    cursor: default;
+}
+

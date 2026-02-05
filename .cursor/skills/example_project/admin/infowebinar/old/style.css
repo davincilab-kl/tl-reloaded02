@@ -1,0 +1,253 @@
+/* Infowebinar-Seite Styling */
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 160px);
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #333;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.infowebinar-content {
+    width: 100%;
+}
+
+.loading-messages, .empty-state, .error-message {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.empty-state i, .error-message {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
+/* Participations List */
+.participations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.date-group {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.date-header {
+    font-size: 1.3rem;
+    color: #333;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.participations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.participation-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.participation-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.participation-card.participated {
+    border-left: 4px solid #28a745;
+}
+
+.participation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.participation-time {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.participated-badge {
+    background: #d4edda;
+    color: #155724;
+}
+
+.not-participated-badge {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.pending-badge {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.participation-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.participation-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.info-row {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.info-row strong {
+    color: #333;
+    margin-right: 5px;
+}
+
+.participation-actions {
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-participated,
+.btn-not-participated {
+    flex: 1;
+    padding: 10px 16px;
+    border: 2px solid;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-participated {
+    background: white;
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-participated:hover:not(:disabled) {
+    background: #28a745;
+    color: white;
+}
+
+.btn-participated.active {
+    background: #28a745;
+    color: white;
+    cursor: default;
+}
+
+.btn-not-participated {
+    background: white;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-not-participated:hover:not(:disabled) {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-not-participated.active {
+    background: #dc3545;
+    color: white;
+    cursor: default;
+}
+
+.btn-participated:disabled,
+.btn-not-participated:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Modal */
+/* Modal Styles werden aus /style.css verwendet */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}

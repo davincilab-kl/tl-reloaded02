@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/30 shadow-glass-sm;
+  }
+
+  .premium-card {
+    @apply bg-white border border-slate-100 shadow-premium rounded-2xl transition-all duration-300 hover:shadow-xl;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-slate-900 to-slate-600;
+  }
+
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400;
+  }
+}
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #1E293B;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background) !important;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom scrollbar for modern look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-200 rounded-full hover:bg-neutral-300 transition-colors;
+}
+
+/* Page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* ... rest of the previously existing styles can be kept or removed if redundant ... */
+
+.imgDark {
+  display: none;
+}
+
+/* Dark mode disabled for landing page - keep white/blue design */
+
+/* Landing Page Custom Styles - Only keep what Tailwind can't handle */
+html {
+  scroll-behavior: smooth;
+}
+
+.card-base {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  position: relative;
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+.card-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 197, 253, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card-base:hover {
+  transform: translateY(-8px) rotateX(3deg) rotateY(-3deg) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(59, 130, 246, 0.15),
+    0 0 40px rgba(59, 130, 246, 0.1);
+  will-change: transform;
+}
+
+.card-base:hover::before {
+  opacity: 1;
+}
+
+.card-base .icon-container {
+  transform: translateZ(10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-base:hover .icon-container {
+  transform: translateZ(25px) scale(1.15) rotateY(5deg);
+  will-change: transform;
+}
+
+/* Only keep essential custom styles - rest use Tailwind */
+
+/* Testimonials carousel */
+.testimonials-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+#testimonials-carousel {
+  display: flex;
+  gap: 1rem;
+  animation: scroll-testimonials 40s linear infinite;
+  will-change: transform;
+  --scroll-distance: 0px;
+  width: fit-content;
+  min-width: 100%;
+}
+
+#testimonials-carousel:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-testimonials {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(var(--scroll-distance));
+  }
+}
+
+/* Optimize animations for performance */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.testimonial-item {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* Mobile: 1 item visible */
+@media (max-width: 767px) {
+  .testimonial-item {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+/* Tablet: 1.5 items visible */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .testimonial-item {
+    width: calc(66.666% - 0.5rem);
+    flex-basis: calc(66.666% - 0.5rem);
+  }
+}
+
+/* Desktop: 2 items visible */
+@media (min-width: 1024px) {
+  .testimonial-item {
+    width: calc(50% - 0.5rem);
+    flex-basis: calc(50% - 0.5rem);
+  }
+}
+
+/* Mobile fixes for screens smaller than 420px */
+@media (max-width: 425px) {
+  #hero {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  #hero h1 {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  #hero .btn-primary,
+  #hero .btn-secondary {
+    font-size: 0.875rem !important;
+    padding: 0.75rem 1rem !important;
+    width: 100%;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  #hero .flex.flex-col {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Extra small screens - smaller than 345px */
+@media (max-width: 344px) {
+  #hero h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  #hero .btn-primary,
+  #hero .btn-secondary {
+    font-size: 0.75rem !important;
+    padding: 0.625rem 0.875rem !important;
+  }
+}
+
+/* Ensure list items are left-aligned on mobile */
+@media (max-width: 767px) {
+  ul li {
+    text-align: left !important;
+    justify-content: flex-start !important;
+  }
+
+  .text-center\:lg\:text-left ul {
+    text-align: left !important;
+  }
+}
+
+/* Enforce white text on button hover */
+a[class*="bg-[#4182FF]"]:hover,
+a[class*="4182FF"]:hover,
+.btn-primary:hover,
+a.button-hover:hover {
+  color: white !important;
+}
+
+/* Ensure all child elements stay white on hover */
+a[class*="bg-[#4182FF]"]:hover *,
+a[class*="4182FF"]:hover *,
+.btn-primary:hover *,
+a.button-hover:hover * {
+  color: white !important;
+}
+
+/* Ensure SVG icons stay white on hover */
+a[class*="bg-[#4182FF]"]:hover svg,
+a[class*="4182FF"]:hover svg,
+.btn-primary:hover svg,
+a.button-hover:hover svg {
+  color: white !important;
+  stroke: white !important;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Fix certification logo images */
+#hero .grid.grid-cols-4 img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+#hero .grid.grid-cols-4 a {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

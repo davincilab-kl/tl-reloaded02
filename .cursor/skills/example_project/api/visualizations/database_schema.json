@@ -1,0 +1,540 @@
+{
+  "version": "1.0",
+  "last_updated": "2024-01-01",
+  "tables": [
+    {
+      "name": "admin_teacher_lists",
+      "description": "Listen von Lehrkräften für Admins",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(255)", "nullable": false, "comment": "Name der Liste"},
+        {"name": "created_by_user_id", "type": "int", "nullable": false, "comment": "Admin, der die Liste erstellt hat"},
+        {"name": "filter_config", "type": "json", "nullable": false, "comment": "Gespeicherte Filter-Konfiguration"},
+        {"name": "columns_config", "type": "json", "nullable": false, "comment": "Welche Spalten angezeigt werden sollen"},
+        {"name": "last_updated", "type": "datetime", "nullable": true, "comment": "Letzte Aktualisierung des Caches"},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true},
+        {"name": "is_generating", "type": "tinyint(1)", "default": "0", "comment": "Wird gerade generiert/aktualisiert"},
+        {"name": "cache_progress_total", "type": "int", "nullable": true},
+        {"name": "cache_progress_processed", "type": "int", "nullable": true}
+      ],
+      "indexes": ["idx_created_by_user_id", "idx_name", "idx_last_updated"]
+    },
+    {
+      "name": "admin_teacher_list_cache",
+      "description": "Cache für Admin-Lehrkräfte-Listen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "list_id", "type": "int", "nullable": false, "foreign_key": "admin_teacher_lists.id"},
+        {"name": "teacher_id", "type": "int", "nullable": false, "foreign_key": "teachers.id"},
+        {"name": "cached_data", "type": "json", "nullable": false},
+        {"name": "cached_at", "type": "datetime", "nullable": false},
+        {"name": "color_marker", "type": "varchar(20)", "nullable": true},
+        {"name": "notes", "type": "text", "nullable": true},
+        {"name": "tags", "type": "json", "nullable": true},
+        {"name": "updated_by_user_id", "type": "int", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "list_id", "references": "admin_teacher_lists", "on_delete": "CASCADE"},
+        {"column": "teacher_id", "references": "teachers", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "admins",
+      "description": "Admin-Benutzer",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "teacher_id", "type": "int", "nullable": false, "foreign_key": "teachers.id"},
+        {"name": "student_id", "type": "int", "nullable": false, "foreign_key": "students.id"},
+        {"name": "created_at", "type": "datetime", "nullable": false}
+      ],
+      "foreign_keys": [
+        {"column": "teacher_id", "references": "teachers", "on_delete": "RESTRICT"},
+        {"column": "student_id", "references": "students", "on_delete": "RESTRICT"}
+      ]
+    },
+    {
+      "name": "certificate_types",
+      "description": "Zertifikatstypen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "type", "type": "varchar(45)", "nullable": false},
+        {"name": "title", "type": "varchar(255)", "default": "Titel"},
+        {"name": "description", "type": "text", "nullable": true},
+        {"name": "template_file_path", "type": "varchar(45)", "nullable": false},
+        {"name": "created_at", "type": "datetime", "nullable": true}
+      ]
+    },
+    {
+      "name": "certificates",
+      "description": "Zertifikate von Schülern",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "certificate_type", "type": "varchar(45)", "nullable": true},
+        {"name": "student_id", "type": "int", "nullable": false, "foreign_key": "students.id"},
+        {"name": "earned_date", "type": "datetime", "nullable": false}
+      ],
+      "foreign_keys": [
+        {"column": "student_id", "references": "students", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "challenges",
+      "description": "Herausforderungen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "title", "type": "varchar(255)", "nullable": false},
+        {"name": "description", "type": "text", "nullable": true},
+        {"name": "challenge_type", "type": "enum('tscore','projects')", "nullable": false},
+        {"name": "state", "type": "varchar(50)", "default": "active"},
+        {"name": "start_date", "type": "date", "nullable": true},
+        {"name": "end_date", "type": "date", "nullable": true},
+        {"name": "state_filter", "type": "varchar(100)", "nullable": true},
+        {"name": "sponsor_filter", "type": "varchar(100)", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true},
+        {"name": "image_path", "type": "varchar(255)", "nullable": true}
+      ]
+    },
+    {
+      "name": "challenge_participations",
+      "description": "Challenge-Teilnahmen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "challenge_id", "type": "int", "nullable": false, "foreign_key": "challenges.id"},
+        {"name": "project_id", "type": "int", "nullable": false, "foreign_key": "projects.id"},
+        {"name": "created_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "challenge_id", "references": "challenges", "on_delete": "CASCADE"},
+        {"column": "project_id", "references": "projects", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "classes",
+      "description": "Klassen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(255)", "nullable": true},
+        {"name": "teacher_id", "type": "int", "nullable": true, "foreign_key": "teachers.id"},
+        {"name": "school_id", "type": "int", "nullable": true, "foreign_key": "schools.id"},
+        {"name": "created_at", "type": "datetime", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "school_id", "references": "schools", "on_delete": null}
+      ]
+    },
+    {
+      "name": "class_orders",
+      "description": "Klassen-Bestellungen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "order_id", "type": "int", "nullable": false},
+        {"name": "class_id", "type": "int", "nullable": false, "foreign_key": "classes.id"},
+        {"name": "course_package_id", "type": "int", "nullable": false, "foreign_key": "course_packages.id"},
+        {"name": "provisioning_type", "type": "enum('funded','invoice','uew')", "nullable": false},
+        {"name": "student_count", "type": "int", "nullable": false},
+        {"name": "user_id", "type": "int", "nullable": false},
+        {"name": "school_year_id", "type": "int", "nullable": true, "foreign_key": "school_years.id"},
+        {"name": "status", "type": "enum('pending','paid','completed','cancelled')", "default": "pending"},
+        {"name": "price_per_student", "type": "decimal(10,2)", "default": "12.00"},
+        {"name": "tax_rate", "type": "decimal(5,4)", "default": "0.2000"},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "class_id", "references": "classes", "on_delete": "CASCADE"},
+        {"column": "course_package_id", "references": "course_packages", "on_delete": "RESTRICT"}
+      ]
+    },
+    {
+      "name": "class_school_years",
+      "description": "Klassen-Schuljahre Verknüpfung",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "class_id", "type": "int", "nullable": false, "foreign_key": "classes.id"},
+        {"name": "school_year_id", "type": "int", "nullable": false, "foreign_key": "school_years.id"},
+        {"name": "is_active", "type": "tinyint(1)", "default": "1"},
+        {"name": "created_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "class_id", "references": "classes", "on_delete": "CASCADE"},
+        {"column": "school_year_id", "references": "school_years", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "course_packages",
+      "description": "Kurspakete",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(255)", "nullable": false},
+        {"name": "description", "type": "text", "nullable": true},
+        {"name": "course_ids", "type": "json", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ]
+    },
+    {
+      "name": "courses",
+      "description": "Kurse",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "title", "type": "varchar(45)", "default": "Kurs"},
+        {"name": "description", "type": "varchar(500)", "nullable": true},
+        {"name": "cover_path", "type": "varchar(45)", "nullable": true},
+        {"name": "background_path", "type": "varchar(45)", "nullable": true},
+        {"name": "prio", "type": "int", "default": "0"},
+        {"name": "text", "type": "longtext", "nullable": true}
+      ]
+    },
+    {
+      "name": "email_templates",
+      "description": "E-Mail-Vorlagen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(255)", "nullable": false},
+        {"name": "subject", "type": "varchar(500)", "nullable": false},
+        {"name": "body", "type": "text", "nullable": false},
+        {"name": "is_html", "type": "tinyint(1)", "default": "0"},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true},
+        {"name": "scheduled_at", "type": "datetime", "nullable": true},
+        {"name": "recipient_type", "type": "varchar(50)", "nullable": true},
+        {"name": "custom_email", "type": "varchar(255)", "nullable": true},
+        {"name": "scheduled_sent", "type": "tinyint(1)", "default": "0"}
+      ]
+    },
+    {
+      "name": "infowebinar_participation",
+      "description": "Infowebinar-Teilnahmen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "teacher_id", "type": "int", "nullable": false, "foreign_key": "teachers.id"},
+        {"name": "webinar_date", "type": "datetime", "nullable": false},
+        {"name": "participated", "type": "tinyint(1)", "nullable": true},
+        {"name": "updated_by_user_id", "type": "int", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "teacher_id", "references": "teachers", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "lection_completions",
+      "description": "Lektions-Abschlüsse",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "student_id", "type": "int", "nullable": false, "foreign_key": "students.id"},
+        {"name": "lection_id", "type": "int", "nullable": false, "foreign_key": "lections.id"},
+        {"name": "completed_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "student_id", "references": "students", "on_delete": null},
+        {"column": "lection_id", "references": "lections", "on_delete": null}
+      ]
+    },
+    {
+      "name": "lections",
+      "description": "Lektionen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "title", "type": "varchar(100)", "default": "Lektion X"},
+        {"name": "text", "type": "longtext", "nullable": true},
+        {"name": "course_id", "type": "int", "nullable": true, "foreign_key": "courses.id"},
+        {"name": "order", "type": "int", "default": "0"}
+      ],
+      "foreign_keys": [
+        {"column": "course_id", "references": "courses", "on_delete": null}
+      ]
+    },
+    {
+      "name": "messages",
+      "description": "Nachrichten",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "title", "type": "varchar(45)", "default": "Titel"},
+        {"name": "message", "type": "varchar(1000)", "nullable": true},
+        {"name": "sender", "type": "varchar(45)", "nullable": true},
+        {"name": "receiver", "type": "varchar(45)", "nullable": true},
+        {"name": "timestamp", "type": "datetime", "nullable": true},
+        {"name": "m_read", "type": "varchar(1)", "nullable": true},
+        {"name": "thread_id", "type": "int", "nullable": true},
+        {"name": "archived", "type": "tinyint(1)", "default": "0"}
+      ]
+    },
+    {
+      "name": "projects",
+      "description": "Projekte",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "title", "type": "varchar(45)", "nullable": true},
+        {"name": "description", "type": "varchar(1000)", "nullable": true},
+        {"name": "project_data", "type": "longtext", "nullable": true, "comment": "Scratch-Projektdatei als JSON"},
+        {"name": "cover", "type": "longtext", "nullable": true},
+        {"name": "student_id", "type": "int", "nullable": true, "foreign_key": "students.id"},
+        {"name": "status", "type": "enum('working','check','published')", "nullable": false},
+        {"name": "likes", "type": "int", "default": "0"}
+      ],
+      "foreign_keys": [
+        {"column": "student_id", "references": "students", "on_delete": null}
+      ]
+    },
+    {
+      "name": "quiz_questions",
+      "description": "Quiz-Fragen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "quiz_id", "type": "int", "nullable": false, "foreign_key": "quizzes.id"},
+        {"name": "type", "type": "varchar(50)", "nullable": false},
+        {"name": "title", "type": "varchar(500)", "nullable": true},
+        {"name": "text", "type": "text", "nullable": true},
+        {"name": "order_index", "type": "int", "default": "0"},
+        {"name": "points", "type": "int", "default": "1"},
+        {"name": "required", "type": "tinyint(1)", "default": "1"},
+        {"name": "question_data", "type": "json", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "quiz_id", "references": "quizzes", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "quiz_results",
+      "description": "Quiz-Ergebnisse",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "student_id", "type": "int", "nullable": false, "foreign_key": "students.id"},
+        {"name": "quiz_id", "type": "int", "nullable": false, "foreign_key": "quizzes.id"},
+        {"name": "points_earned", "type": "int", "default": "0"},
+        {"name": "points_total", "type": "int", "default": "0"},
+        {"name": "passed", "type": "tinyint(1)", "default": "0"},
+        {"name": "completed_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "quiz_id", "references": "quizzes", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "quizzes",
+      "description": "Quizzes",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "lection_id", "type": "int", "nullable": false, "foreign_key": "lections.id"},
+        {"name": "title", "type": "varchar(255)", "nullable": true},
+        {"name": "description", "type": "text", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "lection_id", "references": "lections", "on_delete": null}
+      ]
+    },
+    {
+      "name": "school_school_years",
+      "description": "Schule-Schuljahre Verknüpfung",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "school_id", "type": "int", "nullable": false, "foreign_key": "schools.id"},
+        {"name": "school_year_id", "type": "int", "nullable": false, "foreign_key": "school_years.id"},
+        {"name": "is_active", "type": "tinyint(1)", "default": "1"},
+        {"name": "sponsor", "type": "varchar(50)", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "school_id", "references": "schools", "on_delete": "CASCADE"},
+        {"column": "school_year_id", "references": "school_years", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "school_years",
+      "description": "Schuljahre",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(20)", "nullable": false, "comment": "Format: 2024/2025"},
+        {"name": "start_date", "type": "date", "nullable": false},
+        {"name": "end_date", "type": "date", "nullable": false},
+        {"name": "is_current", "type": "tinyint(1)", "default": "0"},
+        {"name": "created_at", "type": "timestamp", "nullable": true}
+      ]
+    },
+    {
+      "name": "schools",
+      "description": "Schulen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(45)", "default": "Schule"},
+        {"name": "school_code", "type": "varchar(5)", "nullable": true, "unique": true},
+        {"name": "bundesland", "type": "varchar(45)", "default": "Bundesland"},
+        {"name": "schulart", "type": "varchar(100)", "nullable": true},
+        {"name": "schultyp", "type": "varchar(100)", "nullable": true},
+        {"name": "ort", "type": "varchar(255)", "nullable": true},
+        {"name": "strasse", "type": "varchar(255)", "nullable": true},
+        {"name": "plz", "type": "varchar(10)", "nullable": true},
+        {"name": "erstelldatum", "type": "datetime", "nullable": true},
+        {"name": "created_by_user_id", "type": "int", "nullable": true}
+      ]
+    },
+    {
+      "name": "sponsors",
+      "description": "Sponsoren",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "name", "type": "varchar(45)", "nullable": true}
+      ]
+    },
+    {
+      "name": "student_privacy_settings",
+      "description": "Datenschutzeinstellungen von Schülern",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "student_id", "type": "int", "nullable": false, "foreign_key": "students.id"},
+        {"name": "profile_picture", "type": "tinyint(1)", "default": "1"},
+        {"name": "name", "type": "tinyint(1)", "default": "1"},
+        {"name": "stats", "type": "tinyint(1)", "default": "1"},
+        {"name": "projects", "type": "tinyint(1)", "default": "1"},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "student_id", "references": "students", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "students",
+      "description": "Schüler",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "class_id", "type": "int", "nullable": true, "foreign_key": "classes.id"},
+        {"name": "school_id", "type": "int", "nullable": true, "foreign_key": "schools.id"},
+        {"name": "courses_done", "type": "int", "default": "0"},
+        {"name": "projects_wip", "type": "int", "default": "0"},
+        {"name": "projects_pending", "type": "int", "default": "0"},
+        {"name": "projects_public", "type": "int", "default": "0"},
+        {"name": "t_coins", "type": "int", "default": "0"},
+        {"name": "is_teacher_placeholder", "type": "tinyint(1)", "default": "0", "comment": "Markiert Lehrer-Placeholder"}
+      ],
+      "foreign_keys": [
+        {"column": "class_id", "references": "classes", "on_delete": null},
+        {"column": "school_id", "references": "schools", "on_delete": null}
+      ]
+    },
+    {
+      "name": "teacher_notes",
+      "description": "Notizen zu Lehrkräften",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "teacher_id", "type": "int", "nullable": false, "foreign_key": "teachers.id"},
+        {"name": "created_by_user_id", "type": "int", "nullable": false},
+        {"name": "note_text", "type": "text", "nullable": false},
+        {"name": "created_at", "type": "timestamp", "nullable": true},
+        {"name": "updated_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "teacher_id", "references": "teachers", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "teacher_stati",
+      "description": "Lehrkräfte-Status",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "order", "type": "int", "nullable": false},
+        {"name": "label", "type": "varchar(45)", "nullable": true},
+        {"name": "display_name", "type": "varchar(100)", "nullable": true},
+        {"name": "description", "type": "text", "nullable": true}
+      ]
+    },
+    {
+      "name": "teacher_status_history",
+      "description": "Lehrkräfte-Status-Verlauf",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "teacher_id", "type": "int", "nullable": false, "foreign_key": "teachers.id"},
+        {"name": "status_id", "type": "int", "nullable": false, "foreign_key": "teacher_stati.id"},
+        {"name": "previous_status_id", "type": "int", "nullable": true},
+        {"name": "changed_at", "type": "datetime", "nullable": false},
+        {"name": "changed_by", "type": "int", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "teacher_id", "references": "teachers", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "teacher_waitlist",
+      "description": "Warteliste für Lehrkräfte",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "teacher_id", "type": "int", "nullable": false, "foreign_key": "teachers.id"},
+        {"name": "school_id", "type": "int", "nullable": false, "foreign_key": "schools.id"},
+        {"name": "created_at", "type": "datetime", "nullable": false},
+        {"name": "accepted_at", "type": "datetime", "nullable": true},
+        {"name": "accepted_by", "type": "int", "nullable": true},
+        {"name": "status", "type": "enum('pending','accepted','rejected')", "default": "pending"}
+      ],
+      "foreign_keys": [
+        {"column": "teacher_id", "references": "teachers", "on_delete": "CASCADE"},
+        {"column": "school_id", "references": "schools", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "teachers",
+      "description": "Lehrkräfte",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "school_id", "type": "int", "nullable": true, "foreign_key": "schools.id"},
+        {"name": "infowebinar", "type": "datetime", "nullable": true},
+        {"name": "school_admin", "type": "varchar(1)", "default": "0"},
+        {"name": "student_id", "type": "int", "nullable": true, "foreign_key": "students.id"},
+        {"name": "status_id", "type": "int", "default": "0", "foreign_key": "teacher_stati.id"},
+        {"name": "waitlist", "type": "tinyint", "nullable": true},
+        {"name": "register_schoolcode", "type": "varchar(5)", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "school_id", "references": "schools", "on_delete": null},
+        {"column": "student_id", "references": "students", "on_delete": null},
+        {"column": "status_id", "references": "teacher_stati", "on_delete": null}
+      ]
+    },
+    {
+      "name": "tcoins_transactions",
+      "description": "T-Coins Transaktionen",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "student_id", "type": "int", "nullable": false, "foreign_key": "students.id"},
+        {"name": "amount", "type": "int", "nullable": false},
+        {"name": "reason", "type": "varchar(100)", "nullable": false},
+        {"name": "reference_id", "type": "int", "nullable": true},
+        {"name": "reference_type", "type": "varchar(50)", "nullable": true},
+        {"name": "created_at", "type": "timestamp", "nullable": true}
+      ],
+      "foreign_keys": [
+        {"column": "student_id", "references": "students", "on_delete": "CASCADE"}
+      ]
+    },
+    {
+      "name": "users",
+      "description": "Benutzer",
+      "columns": [
+        {"name": "id", "type": "int", "primary_key": true, "auto_increment": true},
+        {"name": "first_name", "type": "varchar(255)", "nullable": true},
+        {"name": "last_name", "type": "varchar(255)", "nullable": true},
+        {"name": "role", "type": "varchar(45)", "nullable": true},
+        {"name": "role_id", "type": "int", "nullable": true},
+        {"name": "email", "type": "varchar(45)", "nullable": true, "unique": true},
+        {"name": "password", "type": "varchar(45)", "default": "123"},
+        {"name": "last_login", "type": "datetime", "nullable": true},
+        {"name": "created_at", "type": "datetime", "nullable": true},
+        {"name": "phone", "type": "varchar(25)", "nullable": true},
+        {"name": "newsletter", "type": "varchar(1)", "nullable": true},
+        {"name": "salutation", "type": "varchar(45)", "nullable": true},
+        {"name": "email_verification_code", "type": "int", "nullable": true},
+        {"name": "email_verified", "type": "tinyint(1)", "default": "0"},
+        {"name": "avatar_seed", "type": "varchar(255)", "nullable": true},
+        {"name": "avatar_style", "type": "varchar(50)", "default": "avataaars"}
+      ]
+    }
+  ]
+}
+

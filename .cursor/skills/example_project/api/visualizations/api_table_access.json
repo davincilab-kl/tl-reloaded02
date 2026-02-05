@@ -1,0 +1,426 @@
+{
+  "version": "1.0",
+  "last_updated": "2024-01-01",
+  "description": "Visualisierung der API-zu-Tabellen-Zugriffe",
+  "apis": [
+    {
+      "path": "/api/classes/create_class.php",
+      "name": "create_class",
+      "category": "classes",
+      "method": "POST",
+      "description": "Erstellt eine neue Klasse mit Schülern",
+      "table_access": [
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "school_school_years", "operation": "SELECT"},
+        {"table": "school_years", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "course_packages", "operation": "SELECT"},
+        {"table": "classes", "operation": "INSERT"},
+        {"table": "class_orders", "operation": "SELECT"},
+        {"table": "class_orders", "operation": "INSERT"},
+        {"table": "students", "operation": "INSERT"},
+        {"table": "tcoins_transactions", "operation": "INSERT"},
+        {"table": "students", "operation": "UPDATE"},
+        {"table": "teacher_stati", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/classes/delete_class.php",
+      "name": "delete_class",
+      "category": "classes",
+      "method": "DELETE",
+      "description": "Löscht eine Klasse",
+      "table_access": [
+        {"table": "classes", "operation": "SELECT"},
+        {"table": "classes", "operation": "DELETE"},
+        {"table": "students", "operation": "SELECT"},
+        {"table": "users", "operation": "DELETE"}
+      ]
+    },
+    {
+      "path": "/api/classes/get_class_orders.php",
+      "name": "get_class_orders",
+      "category": "classes",
+      "method": "GET",
+      "description": "Holt Bestellungen für Klassen",
+      "table_access": [
+        {"table": "class_orders", "operation": "SELECT"},
+        {"table": "classes", "operation": "SELECT"},
+        {"table": "course_packages", "operation": "SELECT"},
+        {"table": "school_years", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/schools/get_schools.php",
+      "name": "get_schools",
+      "category": "schools",
+      "method": "GET",
+      "description": "Holt Liste aller Schulen mit Filtern",
+      "table_access": [
+        {"table": "schools", "operation": "SELECT"},
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "classes", "operation": "SELECT"},
+        {"table": "students", "operation": "SELECT"},
+        {"table": "school_school_years", "operation": "SELECT"},
+        {"table": "school_years", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/schools/create_school.php",
+      "name": "create_school",
+      "category": "schools",
+      "method": "POST",
+      "description": "Erstellt eine neue Schule",
+      "table_access": [
+        {"table": "schools", "operation": "INSERT"},
+        {"table": "schools", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/schools/update_school.php",
+      "name": "update_school",
+      "category": "schools",
+      "method": "POST",
+      "description": "Aktualisiert Schulinformationen",
+      "table_access": [
+        {"table": "schools", "operation": "SELECT"},
+        {"table": "schools", "operation": "UPDATE"}
+      ]
+    },
+    {
+      "path": "/api/schools/update_foerderung.php",
+      "name": "update_foerderung",
+      "category": "schools",
+      "method": "POST",
+      "description": "Aktualisiert Förderungsstatus",
+      "table_access": [
+        {"table": "school_school_years", "operation": "SELECT"},
+        {"table": "school_school_years", "operation": "INSERT"},
+        {"table": "school_school_years", "operation": "UPDATE"},
+        {"table": "school_years", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/students/get_students.php",
+      "name": "get_students",
+      "category": "students",
+      "method": "GET",
+      "description": "Holt Liste der Schüler",
+      "table_access": [
+        {"table": "students", "operation": "SELECT"},
+        {"table": "classes", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/students/get_profile.php",
+      "name": "get_student_profile",
+      "category": "students",
+      "method": "GET",
+      "description": "Holt Schülerprofil",
+      "table_access": [
+        {"table": "students", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "classes", "operation": "SELECT"},
+        {"table": "projects", "operation": "SELECT"},
+        {"table": "lection_completions", "operation": "SELECT"},
+        {"table": "certificates", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/students/tcoins_manager.php",
+      "name": "tcoins_manager",
+      "category": "students",
+      "method": "POST",
+      "description": "Verwaltet T-Coins Transaktionen",
+      "table_access": [
+        {"table": "tcoins_transactions", "operation": "INSERT"},
+        {"table": "students", "operation": "UPDATE"},
+        {"table": "students", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/teachers/get_teachers.php",
+      "name": "get_teachers",
+      "category": "teachers",
+      "method": "GET",
+      "description": "Holt Liste der Lehrkräfte",
+      "table_access": [
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "schools", "operation": "SELECT"},
+        {"table": "teacher_stati", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/teachers/get_profile.php",
+      "name": "get_teacher_profile",
+      "category": "teachers",
+      "method": "GET",
+      "description": "Holt Lehrkräfte-Profil",
+      "table_access": [
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "schools", "operation": "SELECT"},
+        {"table": "classes", "operation": "SELECT"},
+        {"table": "teacher_notes", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/teachers/create_note.php",
+      "name": "create_teacher_note",
+      "category": "teachers",
+      "method": "POST",
+      "description": "Erstellt Notiz zu Lehrkraft",
+      "table_access": [
+        {"table": "teacher_notes", "operation": "INSERT"},
+        {"table": "teachers", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/projects/create_project.php",
+      "name": "create_project",
+      "category": "projects",
+      "method": "POST",
+      "description": "Erstellt neues Projekt",
+      "table_access": [
+        {"table": "projects", "operation": "INSERT"},
+        {"table": "students", "operation": "SELECT"},
+        {"table": "students", "operation": "UPDATE"}
+      ]
+    },
+    {
+      "path": "/api/projects/get_student_projects.php",
+      "name": "get_student_projects",
+      "category": "projects",
+      "method": "GET",
+      "description": "Holt Projekte eines Schülers",
+      "table_access": [
+        {"table": "projects", "operation": "SELECT"},
+        {"table": "students", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/projects/publish_project.php",
+      "name": "publish_project",
+      "category": "projects",
+      "method": "POST",
+      "description": "Veröffentlicht ein Projekt",
+      "table_access": [
+        {"table": "projects", "operation": "UPDATE"},
+        {"table": "students", "operation": "UPDATE"}
+      ]
+    },
+    {
+      "path": "/api/challenges/get_challenges.php",
+      "name": "get_challenges",
+      "category": "challenges",
+      "method": "GET",
+      "description": "Holt alle Challenges",
+      "table_access": [
+        {"table": "challenges", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/challenges/create_challenge.php",
+      "name": "create_challenge",
+      "category": "challenges",
+      "method": "POST",
+      "description": "Erstellt neue Challenge",
+      "table_access": [
+        {"table": "challenges", "operation": "INSERT"}
+      ]
+    },
+    {
+      "path": "/api/challenges/add_project_to_challenges.php",
+      "name": "add_project_to_challenges",
+      "category": "challenges",
+      "method": "POST",
+      "description": "Fügt Projekt zu Challenge hinzu",
+      "table_access": [
+        {"table": "challenge_participations", "operation": "INSERT"},
+        {"table": "challenges", "operation": "SELECT"},
+        {"table": "projects", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/courses/get_courses.php",
+      "name": "get_courses",
+      "category": "courses",
+      "method": "GET",
+      "description": "Holt alle Kurse",
+      "table_access": [
+        {"table": "courses", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/courses/get_lections.php",
+      "name": "get_lections",
+      "category": "courses",
+      "method": "GET",
+      "description": "Holt Lektionen eines Kurses",
+      "table_access": [
+        {"table": "lections", "operation": "SELECT"},
+        {"table": "courses", "operation": "SELECT"},
+        {"table": "lection_completions", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/quiz/get_quiz.php",
+      "name": "get_quiz",
+      "category": "quiz",
+      "method": "GET",
+      "description": "Holt Quiz-Details",
+      "table_access": [
+        {"table": "quizzes", "operation": "SELECT"},
+        {"table": "quiz_questions", "operation": "SELECT"},
+        {"table": "lections", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/quiz/submit_quiz_result.php",
+      "name": "submit_quiz_result",
+      "category": "quiz",
+      "method": "POST",
+      "description": "Speichert Quiz-Ergebnis",
+      "table_access": [
+        {"table": "quiz_results", "operation": "INSERT"},
+        {"table": "quiz_results", "operation": "SELECT"},
+        {"table": "quizzes", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/messages/get_messages.php",
+      "name": "get_messages",
+      "category": "messages",
+      "method": "GET",
+      "description": "Holt Nachrichten",
+      "table_access": [
+        {"table": "messages", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/messages/send_message.php",
+      "name": "send_message",
+      "category": "messages",
+      "method": "POST",
+      "description": "Sendet Nachricht",
+      "table_access": [
+        {"table": "messages", "operation": "INSERT"},
+        {"table": "users", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/infowebinar/get_participations.php",
+      "name": "get_infowebinar_participations",
+      "category": "infowebinar",
+      "method": "GET",
+      "description": "Holt Infowebinar-Teilnahmen",
+      "table_access": [
+        {"table": "infowebinar_participation", "operation": "SELECT"},
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/infowebinar/register_participation.php",
+      "name": "register_infowebinar",
+      "category": "infowebinar",
+      "method": "POST",
+      "description": "Registriert Infowebinar-Teilnahme",
+      "table_access": [
+        {"table": "infowebinar_participation", "operation": "INSERT"},
+        {"table": "teachers", "operation": "UPDATE"},
+        {"table": "teachers", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/pipeline/get_teachers_by_status.php",
+      "name": "get_teachers_by_status",
+      "category": "pipeline",
+      "method": "GET",
+      "description": "Holt Lehrkräfte nach Status",
+      "table_access": [
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "teacher_stati", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "schools", "operation": "SELECT"},
+        {"table": "teacher_status_history", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/admin/lists/get_lists.php",
+      "name": "get_admin_lists",
+      "category": "admin",
+      "method": "GET",
+      "description": "Holt Admin-Lehrkräfte-Listen",
+      "table_access": [
+        {"table": "admin_teacher_lists", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/admin/lists/generate_cache.php",
+      "name": "generate_list_cache",
+      "category": "admin",
+      "method": "POST",
+      "description": "Generiert Cache für Liste",
+      "table_access": [
+        {"table": "admin_teacher_list_cache", "operation": "INSERT"},
+        {"table": "admin_teacher_list_cache", "operation": "DELETE"},
+        {"table": "admin_teacher_lists", "operation": "SELECT"},
+        {"table": "admin_teacher_lists", "operation": "UPDATE"},
+        {"table": "teachers", "operation": "SELECT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "schools", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/auth/login.php",
+      "name": "login",
+      "category": "auth",
+      "method": "POST",
+      "description": "Benutzer-Anmeldung",
+      "table_access": [
+        {"table": "users", "operation": "SELECT"},
+        {"table": "users", "operation": "UPDATE"}
+      ]
+    },
+    {
+      "path": "/api/auth/register.php",
+      "name": "register",
+      "category": "auth",
+      "method": "POST",
+      "description": "Benutzer-Registrierung",
+      "table_access": [
+        {"table": "users", "operation": "INSERT"},
+        {"table": "users", "operation": "SELECT"},
+        {"table": "teachers", "operation": "INSERT"},
+        {"table": "students", "operation": "INSERT"}
+      ]
+    },
+    {
+      "path": "/api/email/get_email_templates.php",
+      "name": "get_email_templates",
+      "category": "email",
+      "method": "GET",
+      "description": "Holt E-Mail-Vorlagen",
+      "table_access": [
+        {"table": "email_templates", "operation": "SELECT"}
+      ]
+    },
+    {
+      "path": "/api/school_years/get_current_school_year.php",
+      "name": "get_current_school_year",
+      "category": "school_years",
+      "method": "GET",
+      "description": "Holt aktuelles Schuljahr",
+      "table_access": [
+        {"table": "school_years", "operation": "SELECT"}
+      ]
+    }
+  ]
+}
+

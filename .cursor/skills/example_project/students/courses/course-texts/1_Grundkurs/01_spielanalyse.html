@@ -1,0 +1,738 @@
+<img src="/students/courses/imgs/vimeo_placeholder.png" alt="Video: Spielanalyse" class="vimeo-placeholder" style="width: 100%; max-width: 800px; height: auto; display: block; margin: 20px auto; border-radius: 8px;">
+
+<h3>Das hast du gelernt</h3>
+<p>Zu unserem Spiel gehören diese Spielelemente, die zum Teil auch in fast allen Spielen vorkommen:</p>
+<div class="lection-learning-boxes">
+    <div class="learning-box">
+        <div class="learning-box-icon">🎮</div>
+        <div class="learning-box-title">Spielfigur</div>
+        <div class="learning-box-text">steuerbar und unsere wichtigste Figur</div>
+    </div>
+    <div class="learning-box">
+        <div class="learning-box-icon">👾</div>
+        <div class="learning-box-title">Gegner</div>
+        <div class="learning-box-text">damit das Spiel nicht zu einfach ist</div>
+    </div>
+    <div class="learning-box">
+        <div class="learning-box-icon">🎯</div>
+        <div class="learning-box-title">Spielziel</div>
+        <div class="learning-box-text">Was muss man im Spiel erreichen?</div>
+    </div>
+    <div class="learning-box">
+        <div class="learning-box-icon">⭐</div>
+        <div class="learning-box-title">Sammelgegenstände</div>
+        <div class="learning-box-text">Dinge zum Einsammeln</div>
+    </div>
+    <div class="learning-box">
+        <div class="learning-box-icon">🏆</div>
+        <div class="learning-box-title">Belohnung</div>
+        <div class="learning-box-text">Punkte sammeln und Highscore knacken</div>
+    </div>
+</div>
+
+<h3>Erstelle dein eigenes Spielkonzept</h3>
+<p>Fülle das Formular aus, um dein eigenes Spielkonzept zu entwickeln:</p>
+
+<style>
+.game-concept-form {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    margin: 30px 0;
+}
+
+.game-concept-form header {
+    padding: 30px 40px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.game-concept-form .logo-container {
+    margin-bottom: 15px;
+}
+
+.game-concept-form .logo-container img {
+    width: 144px;
+    height: auto;
+}
+
+.game-concept-form .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.game-concept-form h1 {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #2c3e50;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.game-concept-form .name-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7f8c8d;
+    font-size: 1rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.game-concept-form .name-input-wrapper input {
+    border: none;
+    border-bottom: 2px dotted #3498db;
+    padding: 5px;
+    background: none;
+    color: #2c3e50;
+    flex: 1;
+    font-size: 1rem;
+}
+
+.game-concept-form .name-input-wrapper input:focus {
+    outline: none;
+    border-bottom: 2px solid #3498db;
+}
+
+.game-concept-form .warning-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fee;
+    border-left: 4px solid #e74c3c;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.game-concept-form .warning-box strong {
+    color: #e74c3c;
+}
+
+.game-concept-form .warning-box .success-text {
+    color: #27ae60;
+}
+
+.game-concept-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 30px 40px;
+}
+
+.game-concept-form .form-section {
+    position: relative;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    background: white;
+}
+
+.game-concept-form .form-section::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 12px 0 0 12px;
+}
+
+.game-concept-form .form-section:nth-child(1)::before,
+.game-concept-form .form-section:nth-child(4)::before {
+    background: #3498db;
+}
+
+.game-concept-form .form-section:nth-child(2)::before,
+.game-concept-form .form-section:nth-child(5)::before {
+    background: #fab400;
+}
+
+.game-concept-form .form-section:nth-child(3)::before,
+.game-concept-form .form-section:nth-child(6)::before {
+    background: #14a05a;
+}
+
+.game-concept-h2 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    border: none !important;
+}
+
+.game-concept-h2 .section-number {
+    border-radius: 50%;
+    background: #3498db;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.game-concept-form .form-section:nth-child(1) .section-number,
+.game-concept-form .form-section:nth-child(4) .section-number {
+    background: #3498db;
+}
+
+.game-concept-form .form-section:nth-child(2) .section-number,
+.game-concept-form .form-section:nth-child(5) .section-number {
+    background: #fab400;
+}
+
+.game-concept-form .form-section:nth-child(3) .section-number,
+.game-concept-form .form-section:nth-child(6) .section-number {
+    background: #14a05a;
+}
+
+.game-concept-form .form-section p {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    margin: 0 0 8px 0;
+}
+
+.game-concept-form .form-section textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 2px dotted #3498db;
+    padding: 8px;
+    margin-top: 8px;
+    color: #2c3e50;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    background: none;
+}
+
+.game-concept-form .form-section textarea:focus {
+    outline: none;
+    border-bottom: 2px solid #3498db;
+}
+
+.game-concept-form .form-section:nth-child(2) textarea,
+.game-concept-form .form-section:nth-child(5) textarea {
+    border-bottom-color: #fab400;
+}
+
+.game-concept-form .form-section:nth-child(2) textarea:focus,
+.game-concept-form .form-section:nth-child(5) textarea:focus {
+    border-bottom-color: #fab400;
+}
+
+.game-concept-form .form-section:nth-child(3) textarea,
+.game-concept-form .form-section:nth-child(6) textarea {
+    border-bottom-color: #14a05a;
+}
+
+.game-concept-form .form-section:nth-child(3) textarea:focus,
+.game-concept-form .form-section:nth-child(6) textarea:focus {
+    border-bottom-color: #14a05a;
+}
+
+.game-concept-form .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 0.95rem;
+}
+
+.game-concept-form .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.game-concept-form .checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #3498db;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.game-concept-form .form-section:nth-child(4) .checkbox-item input[type="checkbox"] {
+    border-color: #3498db;
+}
+
+.game-concept-form .form-section:nth-child(6) .checkbox-item input[type="checkbox"] {
+    border-color: #14a05a;
+}
+
+.game-concept-form .form-section .space-y-2 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-download-docx {
+    background: var(--button-gradient);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(65, 130, 255, 0.3);
+}
+
+.btn-download-docx:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(65, 130, 255, 0.4);
+}
+
+.btn-download-docx:active {
+    transform: translateY(0);
+}
+
+.btn-download-docx i {
+    font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+    .game-concept-form .form-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    
+    .game-concept-form header {
+        padding: 20px;
+    }
+    
+    .game-concept-form .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .game-concept-form h1 {
+        white-space: normal;
+    }
+}
+</style>
+
+<main id="game-concept-sheet" class="game-concept-form">
+    <header>
+        <div class="logo-container">
+            <img src="https://talentslounge.com/wp-content/uploads/2025/08/TalentsLounge-Logo-animiert.gif" alt="TalentsLounge Logo">
+        </div>
+        
+        <div class="header-row">
+            <h1>Mein erstes Spiel</h1>
+            <label class="name-input-wrapper">
+                Name:
+                <input type="text" id="student-name">
+            </label>
+        </div>
+        
+        <div class="warning-box">
+            <p style="margin: 0">⚠️ Achtung: Dieses Formular wird NICHT automatisch gespeichert. Bitte nach dem Ausfüllen über den Button <span class="success-text">Als DOCX speichern</span> herunterladen.</p>
+        </div>
+    </header>
+
+    <section class="form-grid">
+        <section class="form-section">
+            <h2 class="game-concept-h2"><span class="section-number">1</span>Idee</h2>
+            <p>Worum geht's in meinem Spiel?</p>
+            <textarea rows="3" id="form-idee"></textarea>
+        </section>
+
+        <section class="form-section">
+            <h2 class="game-concept-h2"><span class="section-number">2</span>Spielfigur</h2>
+            <p>Wer bin ich? / Aussehen / Besonderheit</p>
+            <textarea rows="2" id="form-spielfigur"></textarea>
+            <p style="color: #7f8c8d; font-size: 0.85rem; margin-top: 12px;">Steuerung ist fix: Pfeiltasten</p>
+        </section>
+
+        <section class="form-section">
+            <h2 class="game-concept-h2"><span class="section-number">3</span>Bühne</h2>
+            <p>In welcher Welt spielt mein Spiel?</p>
+            <textarea rows="2" id="form-buehne"></textarea>
+        </section>
+
+        <section class="form-section">
+            <h2 class="game-concept-h2"><span class="section-number">4</span>Ziel</h2>
+            <p>Was soll man schaffen?</p>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="ziel-punkte">
+                    Punkte sammeln
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="ziel-ueberleben">
+                    So lange wie möglich überleben
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="ziel-erreichen">
+                    Ein Ziel erreichen
+                </label>
+            </div>
+            <textarea rows="1" placeholder="Optional: Eigenes Ziel" style="margin-top: 15px;" id="form-ziel-eigen"></textarea>
+        </section>
+
+        <section class="form-section">
+            <h2 class="game-concept-h2"><span class="section-number">5</span>Punkte &amp; Leben</h2>
+            <div class="space-y-2">
+                <div>
+                    <p>Wofür gibt es Punkte?</p>
+                    <textarea rows="1" id="form-punkte"></textarea>
+                </div>
+                <div>
+                    <p>Wodurch verliert man Leben oder Punkte?</p>
+                    <textarea rows="1" id="form-leben"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2 class="game-concept-h2"><span class="section-number">6</span>Wird es schwerer?</h2>
+            <div class="checkbox-group">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="schwerer-ja">
+                    Ja, mit der Zeit schneller/schwerer
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="schwerer-nein">
+                    Nein, bleibt gleich
+                </label>
+            </div>
+        </section>
+    </section>
+    
+    <div style="padding: 30px 40px; text-align: center; border-top: 1px solid #e0e0e0;">
+        <button id="download-docx-btn" class="btn-download-docx">
+            <i class="fas fa-download"></i> Spielkonzept herunterladen und Lektion abschließen
+        </button>
+    </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// Lösche quiz-button-container, da diese Lektion ein eigenes Formular hat
+(function() {
+    function removeQuizContainer() {
+        const quizContainer = document.getElementById('quiz-button-container');
+        if (quizContainer) {
+            quizContainer.remove();
+        }
+    }
+    
+    // Versuche sofort zu löschen
+    removeQuizContainer();
+    
+    // Versuche auch nach kurzer Verzögerung (falls noch nicht geladen)
+    setTimeout(removeQuizContainer, 100);
+    setTimeout(removeQuizContainer, 500);
+})();
+
+// Verwende Event-Delegation, damit es auch funktioniert, wenn das Formular dynamisch geladen wird
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'download-docx-btn') {
+        e.preventDefault();
+        generateDocx();
+    }
+});
+
+async function generateDocx() {
+    try {
+        console.log('Button geklickt - starte DOCX-Generierung');
+        
+        // Prüfe ob JSZip verfügbar ist
+        if (typeof JSZip === 'undefined') {
+            alert('JSZip-Bibliothek wird geladen... Bitte versuche es in einem Moment erneut.');
+            loadJSZip().then(() => generateDocx());
+            return;
+        }
+        
+        // Sammle alle Formulardaten
+        const nameEl = document.getElementById('student-name');
+        const name = nameEl ? nameEl.value : 'Unbekannt';
+        const ideeEl = document.getElementById('form-idee');
+        const idee = ideeEl ? ideeEl.value : '(nicht ausgefüllt)';
+        const spielfigurEl = document.getElementById('form-spielfigur');
+        const spielfigur = spielfigurEl ? spielfigurEl.value : '(nicht ausgefüllt)';
+        const buehneEl = document.getElementById('form-buehne');
+        const buehne = buehneEl ? buehneEl.value : '(nicht ausgefüllt)';
+        
+        // Ziele
+        const ziele = [];
+        const zielPunkte = document.getElementById('ziel-punkte');
+        if (zielPunkte && zielPunkte.checked) ziele.push('Punkte sammeln');
+        const zielUeberleben = document.getElementById('ziel-ueberleben');
+        if (zielUeberleben && zielUeberleben.checked) ziele.push('So lange wie möglich überleben');
+        const zielErreichen = document.getElementById('ziel-erreichen');
+        if (zielErreichen && zielErreichen.checked) ziele.push('Ein Ziel erreichen');
+        const zielEigenEl = document.getElementById('form-ziel-eigen');
+        const zielEigen = zielEigenEl ? zielEigenEl.value : '';
+        if (zielEigen) ziele.push(zielEigen);
+        const zieleText = ziele.length > 0 ? ziele.map(z => '• ' + z).join('\n') : '(keine Ziele ausgewählt)';
+        
+        const punkteEl = document.getElementById('form-punkte');
+        const punkte = punkteEl ? punkteEl.value : '(nicht ausgefüllt)';
+        const lebenEl = document.getElementById('form-leben');
+        const leben = lebenEl ? lebenEl.value : '(nicht ausgefüllt)';
+        
+        // Schwierigkeit
+        const schwerer = [];
+        const schwererJa = document.getElementById('schwerer-ja');
+        if (schwererJa && schwererJa.checked) schwerer.push('Ja, mit der Zeit schneller/schwerer');
+        const schwererNein = document.getElementById('schwerer-nein');
+        if (schwererNein && schwererNein.checked) schwerer.push('Nein, bleibt gleich');
+        const schwererText = schwerer.length > 0 ? schwerer.map(s => '• ' + s).join('\n') : '(nicht ausgewählt)';
+        
+        // Escape XML-Sonderzeichen
+        function escapeXml(unsafe) {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        }
+        
+        // Erstelle Word XML (DOCX ist ein ZIP mit XML-Dateien)
+        const wordXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+    <w:body>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="48"/></w:rPr>
+                <w:t>Mein erstes Spiel</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>Name: </w:t>
+            </w:r>
+            <w:r><w:t>${escapeXml(name)}</w:t></w:r>
+        </w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="36"/></w:rPr>
+                <w:t>1 · Idee</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>Worum geht's in meinem Spiel?</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(idee).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="36"/></w:rPr>
+                <w:t>2 · Spielfigur</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>Wer bin ich? / Aussehen / Besonderheit</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(spielfigur).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:i/></w:rPr>
+                <w:t>Steuerung ist fix: Pfeiltasten</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="36"/></w:rPr>
+                <w:t>3 · Bühne</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>In welcher Welt spielt mein Spiel?</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(buehne).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="36"/></w:rPr>
+                <w:t>4 · Ziel</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>Was soll man schaffen?</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(zieleText).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="36"/></w:rPr>
+                <w:t>5 · Punkte &amp; Leben</w:t>
+            </w:r>
+        </w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>Wofür gibt es Punkte?</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(punkte).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/></w:rPr>
+                <w:t>Wodurch verliert man Leben oder Punkte?</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(leben).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+        <w:p><w:r><w:t/></w:r></w:p>
+        <w:p>
+            <w:r>
+                <w:rPr><w:b/><w:sz w:val="36"/></w:rPr>
+                <w:t>6 · Wird es schwerer?</w:t>
+            </w:r>
+        </w:p>
+        <w:p><w:r><w:t>${escapeXml(schwererText).replace(/\n/g, '</w:t></w:r></w:p><w:p><w:r><w:t>')}</w:t></w:r></w:p>
+    </w:body>
+</w:document>`;
+        
+        // Erstelle DOCX als ZIP-Archiv
+        const zip = new JSZip();
+        
+        // Füge [Content_Types].xml hinzu
+        zip.file('[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+    <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+    <Default Extension="xml" ContentType="application/xml"/>
+    <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`);
+        
+        // Füge _rels/.rels hinzu
+        zip.folder('_rels').file('.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+    <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`);
+        
+        // Füge word/document.xml hinzu
+        zip.folder('word').file('document.xml', wordXml);
+        
+        // Füge word/_rels/document.xml.rels hinzu
+        zip.folder('word').folder('_rels').file('document.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>`);
+        
+        // Generiere Blob und lade herunter
+        const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        downloadFile(blob, `Mein_erstes_Spiel_${name.replace(/\s+/g, '_')}.docx`);
+        
+        // Markiere Lektion als abgeschlossen
+        await markLectionCompleteAfterDownload();
+        
+    } catch (error) {
+        console.error('Fehler beim Generieren der DOCX-Datei:', error);
+        alert('Fehler beim Erstellen der DOCX-Datei: ' + error.message);
+    }
+}
+
+async function markLectionCompleteAfterDownload() {
+    // Hole currentLectionId aus dem globalen Scope (wird in view-scripts.js gesetzt)
+    const lectionId = window.currentLectionId;
+    if (!lectionId) {
+        console.warn('Keine Lektion-ID gefunden');
+        return;
+    }
+    
+    const downloadBtn = document.getElementById('download-docx-btn');
+    const originalText = downloadBtn ? downloadBtn.innerHTML : '';
+    
+    // Verwende die allgemeine markLectionComplete-Funktion aus view-scripts.js
+    if (typeof markLectionComplete === 'function') {
+        const success = await markLectionComplete(lectionId, {
+            buttonElement: downloadBtn,
+            onSuccess: () => {
+                // Zeige Erfolgsmeldung
+                if (downloadBtn) {
+                    downloadBtn.innerHTML = '<i class="fas fa-check-circle"></i> Lektion abgeschlossen!';
+                    downloadBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                    setTimeout(() => {
+                        downloadBtn.innerHTML = originalText;
+                        downloadBtn.style.background = '';
+                        downloadBtn.disabled = false;
+                    }, 3000);
+                }
+            },
+            onError: (error) => {
+                console.error('Fehler beim Markieren der Lektion:', error);
+                if (downloadBtn) {
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = originalText;
+                }
+            }
+        });
+        
+        if (!success && downloadBtn) {
+            downloadBtn.disabled = false;
+            downloadBtn.innerHTML = originalText;
+        }
+    } else {
+        console.warn('markLectionComplete-Funktion nicht gefunden');
+    }
+}
+
+function downloadFile(blob, filename) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+}
+
+function loadJSZip() {
+    return new Promise((resolve, reject) => {
+        if (typeof JSZip !== 'undefined') {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        script.onload = () => {
+            setTimeout(() => {
+                if (typeof JSZip !== 'undefined') {
+                    resolve();
+                } else {
+                    reject(new Error('JSZip konnte nicht geladen werden'));
+                }
+            }, 100);
+        };
+        script.onerror = () => reject(new Error('Fehler beim Laden von JSZip'));
+        document.head.appendChild(script);
+    });
+}
+</script>

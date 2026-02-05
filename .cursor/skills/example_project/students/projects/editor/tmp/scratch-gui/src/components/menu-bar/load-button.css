@@ -1,0 +1,10 @@
+@import "../../css/colors.css";
+
+.load-button {
+    background: $pen-primary;
+}
+
+.load-button:hover {
+    background: $pen-tertiary;
+}
+

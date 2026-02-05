@@ -1,0 +1,557 @@
+/* Hauptmenü für Lehrer */
+.teacher-main-menu {
+    background: white;
+    padding: 15px 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+.main-menu-options {
+    display: flex;
+    gap: 15px;
+    max-height: 100px;
+    padding-bottom: 15px;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+    position: relative;
+}
+
+.main-menu-logo {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.logo-image {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Eingeklappter Zustand - nur die obere Reihe wird versteckt */
+.main-menu-options.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.main-menu-options.collapsed .main-menu-logo {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.dashboard-menu-container {
+    display: flex;
+    background: #f0f5ff;
+    padding: 5px;
+    margin: -5px;
+    border-radius: 11px;
+    border: 1px solid #bccff7;
+}
+
+.main-menu-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #4f4f4f;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.main-menu-option:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.main-menu-option.active {
+    box-shadow: 0 4px 15px rgba(65, 130, 255, 0.4);
+    border: 2px solid var(--primary-color);
+    background-color: white;
+}
+
+.main-menu-option.student-dashboard-restricted {
+    opacity: 0.6;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.main-menu-option.student-dashboard-restricted:hover {
+    opacity: 0.8;
+    transform: translateY(0);
+}
+
+.main-menu-option i {
+    font-size: 20px;
+}
+
+/* Untere Zeile mit Untermenü und Controls */
+.menu-bottom-row {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-top: 15px;
+    border-top: 1px solid #d4d4d4;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    overflow: visible;
+}
+
+/* Untermenü */
+.sub-menu {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    width: auto;
+}
+
+.sub-menu-option {
+    background: transparent;
+    padding: 10px 20px;
+    color: #4f4f4f;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.sub-menu-option:hover {
+    background: var(--button-gradient);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.sub-menu a i {
+    font-size: 14px;
+}
+
+.sub-menu a.active {
+    background: white;
+    color: #535f6d;
+    box-shadow: 0 4px 12px rgba(65, 130, 255, 0.3);
+    border: 2px solid #568fff;
+}
+
+.sub-menu a.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #999 !important;
+}
+
+.sub-menu a.disabled:hover {
+    background: none !important;
+    transform: none !important;
+}
+
+/* Dropdown-Menü für Sub-Menü */
+.sub-menu .dropdown-menu {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+}
+
+.sub-menu .dropdown-toggle {
+    padding: 10px 20px;
+    color: #4f4f4f;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: default;
+    font-family: inherit;
+}
+
+.sub-menu .dropdown-toggle:hover {
+    background: var(--button-gradient);
+    color: white;
+}
+
+.sub-menu .dropdown-toggle.active {
+    border: 2px solid #4282ff;
+}
+
+.sub-menu .dropdown-toggle i {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.sub-menu .dropdown-menu.open .dropdown-toggle i {
+    transform: rotate(180deg);
+}
+
+.sub-menu .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    z-index: 1001;
+    overflow: visible;
+}
+
+.sub-menu .dropdown-menu.open .dropdown-content {
+    display: block;
+}
+
+.sub-menu .dropdown-content a {
+    display: block;
+    padding: 10px 20px;
+    color: #4f4f4f;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 0;
+    white-space: nowrap;
+}
+
+.sub-menu .dropdown-content a:first-child {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.sub-menu .dropdown-content a:last-child {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.sub-menu .dropdown-content a:hover {
+    background: var(--button-gradient);
+    color: white;
+}
+
+.sub-menu .dropdown-content a.active {
+    background: var(--button-gradient);
+    color: white;
+    font-weight: 600;
+}
+
+.sub-menu .dropdown-content a.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #999 !important;
+    background: #f5f5f5 !important;
+}
+
+.sub-menu .dropdown-content a.disabled:hover {
+    background: #f5f5f5 !important;
+    color: #999 !important;
+}
+
+.sub-menu .dropdown-menu.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.sub-menu .dropdown-menu.disabled .dropdown-toggle {
+    cursor: not-allowed;
+    color: #999 !important;
+}
+
+.sub-menu .dropdown-menu.disabled .dropdown-toggle:hover {
+    background: none !important;
+    color: #999 !important;
+}
+
+.sub-menu .dropdown-menu.disabled .dropdown-toggle.active {
+    background: none !important;
+    color: #999 !important;
+}
+
+.logout-menu-item {
+    padding: 10px 20px;
+    color: #4f4f4f;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logout-menu-item:hover {
+    background: #00000078;
+    color: white;
+}
+
+.logout-menu-item i {
+    font-size: 14px;
+}
+
+.logout-menu-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: #999 !important;
+}
+
+.logout-menu-item.disabled:hover {
+    background: none !important;
+    transform: none !important;
+}
+
+/* Profilbild-Link im Sub-Menü */
+.sub-menu-profile-picture-link {
+    display: inline-block;
+    text-decoration: none;
+    margin: 0 -20px 0 0;
+    z-index: 15;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+.sub-menu-profile-picture-link:hover {
+    transform: translateY(-3px);
+    background: none !important;
+}
+
+/* Profilbild im Sub-Menü */
+.sub-menu-profile-picture {
+    width: 50px;
+    font-size: 50px; /* für Profilbildgröße relativ zu container (0.5em) */
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0px 0px 8px 3px rgba(0, 0, 0, 0.15);
+}
+
+.sub-menu-profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Rechte Controls */
+.menu-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+    margin-left: auto;
+    flex-wrap: nowrap;
+    position: relative;
+    z-index: 1;
+    transform: translateY(-21px);
+}
+
+/* Toggle-Button für Hauptmenü (nur im Schüler-Bereich) */
+.main-menu-toggle-btn {
+    min-width: 120px;
+    height: 40px;
+    background: linear-gradient(45deg, #ffe091, #ffb700);
+    border: 1px solid #ffb700;
+    border-radius: 0 0 8px 8px;
+    color: #2c3e50;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(65, 130, 255, 0.3);
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 0 16px;
+}
+
+.main-menu-toggle-btn:hover {
+    background: linear-gradient(45deg, #ffe091, #ffb700);
+    box-shadow: 0 6px 16px rgba(65, 130, 255, 0.4);
+    color: #2c3e50;
+    transform: translateY(0);
+}
+
+.main-menu-toggle-btn i {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+/* Pfeil dreht sich, wenn Menü eingeklappt ist */
+.teacher-main-menu.main-menu-collapsed .main-menu-toggle-btn i {
+    transform: rotate(180deg);
+}
+
+/* Verstecke Toggle-Button wenn nicht im Schüler-Bereich */
+.main-menu-toggle-btn:not(.student-area-toggle) {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-menu-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .main-menu-logo {
+        position: relative;
+        left: auto;
+        margin-bottom: 10px;
+    }
+    
+    .logo-image {
+        height: 40px;
+    }
+    
+    .main-menu-option {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .menu-bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .sub-menu {
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .sub-menu a {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .sub-menu .dropdown-toggle {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .sub-menu .dropdown-content {
+        position: static;
+        margin-top: 0;
+        box-shadow: none;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .sub-menu .dropdown-content a {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .active-student-info {
+        margin-left: 0;
+        margin-top: 8px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .menu-right-controls {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .menu-switch-btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-bottom-row {
+        gap: 10px;
+    }
+    
+    .sub-menu a {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .active-student-info {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .active-student-info .student-id {
+        font-size: 11px;
+    }
+    
+    .sub-menu .dropdown-toggle {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .sub-menu .dropdown-content a {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .menu-user-id-input {
+        flex: 1;
+    }
+    
+    .menu-user-id-input input {
+        width: 60px;
+    }
+    
+    .menu-switch-btn {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    
+    .main-menu-toggle-btn {
+        min-width: 100px;
+        height: 35px;
+        font-size: 12px;
+        padding: 0 12px;
+    }
+}
+

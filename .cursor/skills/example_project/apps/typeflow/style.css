@@ -1,0 +1,682 @@
+@font-face {
+    font-family: 'Lexend';
+    src: url('fonts/Lexend-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('fonts/OpenDyslexic-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'AtkinsonHyperlegible';
+    src: url('fonts/AtkinsonHyperlegible-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+ 
+.page-header {
+    margin-bottom: 0;
+}
+
+.level-selector {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.level-selector h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.level-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.level-btn {
+    padding: 12px 25px;
+    font-size: 1em;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    background: white;
+    color: #667eea;
+}
+
+.level-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.level-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.font-selector {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.font-selector label {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.font-select {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.font-select:hover {
+    border-color: #764ba2;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+}
+
+.font-select:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: white;
+    color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+.stat-unit {
+    display: block;
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+.text-display {
+    margin-bottom: 30px;
+}
+
+.conveyor-belt {
+    background: #f5f5f5;
+    padding: 30px;
+    border-radius: 10px;
+    min-height: 100px;
+    margin-bottom: 20px;
+    border: 2px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    font-size: 1.5em;
+    font-family: 'Lexend', sans-serif;
+    width: 100%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.belt-char {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: all 0.2s;
+    min-width: 40px;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.belt-char.placeholder {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.belt-char.current {
+    background: var(--button-gradient);
+    color: white;
+    font-weight: bold;
+    transform: scale(1.2);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+}
+
+.belt-char.typed.correct {
+    color: #4caf50;
+    opacity: 0.7;
+}
+
+.belt-char.typed.incorrect {
+    color: #f44336;
+    background: #ffebee;
+    text-decoration: underline;
+    opacity: 0.7;
+}
+
+.current-char-indicator {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.current-char-indicator span {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 3em;
+    font-weight: bold;
+    padding: 20px 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    min-width: 80px;
+}
+
+.progress-container {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 16px;
+    background: #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    transition: width 0.3s ease;
+    width: 0%;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1.1em;
+    color: #666;
+    font-weight: bold;
+}
+
+.progress-text span {
+    color: #667eea;
+}
+
+.text-to-type {
+    background: #f5f5f5;
+    padding: 25px;
+    border-radius: 10px;
+    font-size: 1.3em;
+    line-height: 1.8;
+    min-height: 150px;
+    margin-bottom: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.char {
+    display: inline-block;
+    padding: 2px;
+    transition: all 0.2s;
+}
+
+.char.current {
+    background: #667eea;
+    color: white;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.char.correct {
+    color: #4caf50;
+}
+
+.char.incorrect {
+    color: #f44336;
+    background: #ffebee;
+    text-decoration: underline;
+}
+
+.input-field {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-field:focus {
+    border-color: #667eea;
+}
+
+.keyboard-container {
+    margin-bottom: 30px;
+}
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #dcdcdc;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.key {
+    background: #34495e;
+    color: white;
+    border: 2px solid #5f6265;
+    border-radius: 6px;
+    padding: 8px 12px;
+    min-width: 50px;
+    height: 44px;;
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.2s;
+    position: relative;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+.key-label {
+    font-size: 1em;
+    margin-bottom: 4px;
+}
+
+.key-stats {
+    font-size: 0.7em;
+    opacity: 0.8;
+    font-weight: normal;
+    line-height: 1;
+}
+
+.key:hover {
+    background: #3d566e;
+    transform: translateY(2px);
+}
+
+.key.active {
+    background: #667eea;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+}
+
+/* Grundpositionstasten - Linke Hand (Orange) */
+.key.finger-left-home {
+    background: #ff8c42;
+    border: 2px solid #b66f3a;
+}
+
+/* Grundpositionstasten - Rechte Hand (Blau) */
+.key.finger-right-home {
+    background: #4a90e2;
+    border: 2px solid #326fa0;
+}
+
+/* Grundpositionstasten - Linke Hand (Orange) */
+.key.finger-left-home:hover {
+    background: #ffa566;
+}
+
+/* Grundpositionstasten - Rechte Hand (Blau) */
+.key.finger-right-home:hover {
+    background: #66a6ff;
+}
+
+/* Tooltip für Ruhetasten */
+.key-tooltip {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: tooltipFadeIn 0.2s;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.key-tooltip-multiline {
+    white-space: normal;
+}
+
+.key-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.key.space {
+    min-width: 300px;
+}
+
+.finger-hint-title {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+.finger-hint {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.intro-text {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 15px;
+}
+
+.intro-text p {
+    margin: 0;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.instructions {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.instructions h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.instructions ul {
+    list-style-position: inside;
+    line-height: 1.8;
+    color: #555;
+}
+
+.instructions li {
+    margin-bottom: 8px;
+}
+
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.success-modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.success-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.success-modal-content h2 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 2em;
+}
+
+.success-modal-content p {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.level-up-text {
+    color: #667eea;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 20px 0;
+}
+
+.success-modal-content .btn {
+    margin-top: 20px;
+    padding: 15px 40px;
+    font-size: 1.1em;
+}
+
+.pulse-hint {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+.font-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+}
+
+.font-modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s;
+}
+
+.font-modal-content h2 {
+    color: #667eea;
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+.font-preview-container {
+    margin-bottom: 25px;
+}
+
+.font-preview-container label {
+    color: #667eea;
+    font-weight: bold;
+    margin-right: 15px;
+    font-size: 1.1em;
+}
+
+.font-preview-text {
+    background: #f5f5f5;
+    padding: 30px;
+    border-radius: 10px;
+    font-size: 2em;
+    margin: 25px 0;
+    border: 2px solid #e0e0e0;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lexend', sans-serif;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .text-to-type {
+        font-size: 1.1em;
+        padding: 15px;
+    }
+
+    .key {
+        padding: 10px 8px;
+        min-width: 40px;
+        font-size: 0.8em;
+    }
+
+    .key.space {
+        min-width: 200px;
+    }
+
+    .success-modal-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+}
+

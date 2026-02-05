@@ -1,0 +1,56 @@
+.modalContent {
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+}
+
+.modalBody {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.loading,
+.error,
+.empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #575e75;
+}
+
+.error {
+    color: #ff4c4c;
+}
+
+.projectsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.projectItem {
+    padding: 15px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.projectItem:hover {
+    background-color: #f0f0f0;
+}
+
+.projectTitle {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #575e75;
+}
+
+.projectDescription {
+    font-size: 0.9em;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+

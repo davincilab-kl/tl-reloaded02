@@ -1,0 +1,927 @@
+/* Infowebinar-Seite Styling */
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: calc(100vh - 160px);
+}
+
+.page-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sync-buttons-container {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+}
+
+.sync-button-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.last-sync-time {
+    font-size: 0.75rem;
+    color: #666;
+    white-space: nowrap;
+    display: none;
+    margin-right: 20px;
+}
+
+.sync-main-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.sync-dropdown-btn {
+    padding: 11px 12px 12px 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.sync-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 250px;
+}
+
+.sync-dropdown-header {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sync-dropdown-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.sync-date-input {
+    width: 100%;
+    font-size: 0.9rem;
+}
+
+.event-edit-modal-content {
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#event-edit-modal {
+    display: none;
+}
+
+#event-edit-modal.show {
+    display: flex;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #333;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.infowebinar-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 90px;
+}
+
+#refresh-calendly-btn:hover {
+    transform: translate(0);
+    filter: brightness(0.8);
+}
+
+#refresh-calendly-dropdown-btn {
+    padding: 11px 12px 11px 11px;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background: #185de2;
+}
+
+#refresh-calendly-dropdown-btn:hover {
+    transform: translate(0);
+    filter: brightness(0.8);
+}
+
+#refresh-calendly-dropdown {
+    font-size: 0.9rem;
+}
+
+#refresh-calendly-dropdown .form-input {
+    font-size: 0.9rem;
+    padding: 6px 8px;
+}
+
+#sync-all-btn {
+    width: 100%;
+    border-radius: 0 0 5px 5px;
+    padding: 10px;
+}
+
+#sync-all-btn:hover {
+    transform: translate(0);
+    filter: brightness(0.8);
+}
+
+.events-section {
+    width: 45%;
+    min-width: 350px;
+}
+
+.events-section-title {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.date-group {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.date-group-header {
+    font-size: 1rem;
+    color: #333;
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.date-group-events {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.event-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.event-time {
+    font-weight: 600;
+    color: #333;
+}
+
+.event-name {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.meeting-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.meeting-link:hover {
+    text-decoration: underline;
+}
+
+.invitees-list {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.invitee-item {
+    font-size: 0.8rem;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.invitee-email {
+    color: #666;
+}
+
+.no-invitees {
+    font-size: 0.8rem;
+    color: #999;
+    font-style: italic;
+}
+
+.past-invitee-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #333;
+    margin-bottom: 8px;
+    padding: 6px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.past-invitee-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.past-invitee-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-attendance-small {
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.btn-attended-small {
+    border: 1px solid #28a745;
+    background: #28a745;
+    color: white;
+}
+
+.btn-not-attended-small {
+    border: 1px solid #dc3545;
+    background: #dc3545;
+    color: white;
+}
+
+.attendance-status-inline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.loading-messages, .empty-state, .error-message {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.empty-state i, .error-message {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
+/* Participations List */
+.participations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.date-group-old {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.date-header {
+    font-size: 1.3rem;
+    color: #333;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.participations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.participation-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.participation-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.participation-card.participated {
+    border-left: 4px solid #28a745;
+}
+
+.participation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.participation-time {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.participated-badge {
+    background: #d4edda;
+    color: #155724;
+}
+
+.not-participated-badge {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.pending-badge {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.upcoming-badge {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Anwesenheits-Status */
+.attendance-status {
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.attendance-status.attended {
+    color: #28a745;
+}
+
+.attendance-status.not-attended {
+    color: #dc3545;
+}
+
+.attendance-status.not-set {
+    color: #6c757d;
+}
+
+.btn-attendance {
+    transition: opacity 0.2s;
+}
+
+.btn-attendance:hover {
+    opacity: 0.8;
+}
+
+.btn-attendance:active {
+    opacity: 0.6;
+}
+
+.participation-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.participation-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.info-row {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.info-row strong {
+    color: #333;
+    margin-right: 5px;
+}
+
+.participation-actions {
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-participated,
+.btn-not-participated {
+    flex: 1;
+    padding: 10px 16px;
+    border: 2px solid;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-participated {
+    background: white;
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-participated:hover:not(:disabled) {
+    background: #28a745;
+    color: white;
+}
+
+.btn-participated.active {
+    background: #28a745;
+    color: white;
+    cursor: default;
+}
+
+.btn-not-participated {
+    background: white;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-not-participated:hover:not(:disabled) {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-not-participated.active {
+    background: #dc3545;
+    color: white;
+    cursor: default;
+}
+
+.btn-participated:disabled,
+.btn-not-participated:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Modal */
+/* Modal Styles werden aus /style.css verwendet */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Event Edit Modal Styles */
+.event-info-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.event-info-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.event-info-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.event-info-time {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.event-info-location {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 8px;
+}
+
+.event-info-location-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.event-info-location-link:hover {
+    text-decoration: underline;
+}
+
+.attendees-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.attendee-form-card {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0;
+    transition: box-shadow 0.2s;
+    overflow: hidden;
+}
+
+.attendee-form-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.attendee-header-collapsed {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.2s;
+}
+
+.attendee-header-collapsed:hover {
+    background: #f8f9fa;
+}
+
+.attendee-name-collapsed {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.attendee-name-input {
+    display: inline-block;
+    width: auto;
+    min-width: 200px;
+    padding: 4px 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.attendee-name-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+}
+
+.attendee-actions-collapsed {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.attendee-toggle-icon {
+    color: #666;
+    transition: transform 0.2s;
+}
+
+.attendee-form-expanded {
+    padding: 20px;
+}
+
+.attendance-buttons-group {
+    display: flex;
+    align-items: stretch;
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.attendance-btn {
+    flex: 1;
+    padding: 8px 16px;
+    border: none;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-right: 1px solid #ddd;
+}
+
+.attendance-btn:last-child {
+    border-right: none;
+}
+
+.attendance-btn-attended {
+    border-radius: 7px 0 0 7px;
+}
+
+.attendance-btn-not-attended {
+    border-radius: 0;
+}
+
+.attendance-btn-open {
+    border-radius: 0 7px 7px 0;
+}
+
+.attendance-btn:hover {
+    transform: translate(0);
+}
+
+.attendance-btn.attendance-btn-attended:hover {
+    background: #28a745;
+    color: white;
+}
+
+.attendance-btn.attendance-btn-not-attended:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.attendance-btn.attendance-btn-open:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.attendance-btn.active.attendance-btn-attended {
+    background: #28a745;
+    color: white;
+}
+
+.attendance-btn.active.attendance-btn-not-attended {
+    background: #dc3545;
+    color: white;
+}
+
+.attendance-btn.active.attendance-btn-open {
+    background: #6c757d;
+    color: white;
+}
+
+.attendee-header {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.attendee-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.attendee-email {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.attendee-email-readonly {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.attendance-radio-group {
+    display: flex;
+    gap: 15px;
+}
+
+.attendance-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.attendance-radio-label span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.attendance-radio {
+    margin-right: 4px;
+}
+
+.attendance-radio:checked + span {
+    font-weight: 600;
+}
+
+.user-search-container {
+    position: relative;
+}
+
+.user-search-results {
+    margin-top: 4px;
+    display: none;
+}
+
+.user-search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.user-search-no-results {
+    padding: 10px;
+    color: #666;
+    text-align: center;
+}
+
+.user-search-result-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.user-search-result-item:hover {
+    background: #f0f0f0;
+}
+
+.user-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.user-search-result-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.user-search-result-email {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.attendee-form-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-save-attendee {
+    width: 100%;
+}
+
+.new-attendee-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.new-attendee-section-title {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.new-attendee-form-container {
+    display: none;
+    margin-top: 20px;
+}
+
+.new-attendee-form-container.show {
+    display: block;
+}
+
+.btn-show-new-attendee-form {
+    width: 100%;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-edit-event {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.btn-delete-attendee {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    background: none;
+    border: 1px solid transparent;
+    color: #dc3545cc;
+}
+
+.btn-delete-attendee:hover {
+    border-color: #bd2130;
+    color: #dc3545cc;
+    background: none;
+    transform: translateY(0);
+}
+
+.btn-delete-attendee:active {
+    transform: translateY(0);
+}
+
+textarea.form-input {
+    resize: vertical;
+    min-height: 80px;
+}
