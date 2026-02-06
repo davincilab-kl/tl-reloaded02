@@ -11,8 +11,16 @@ RUN pnpm --filter @repo/db db:generate
 RUN pnpm --filter @repo/db build
 RUN pnpm --filter api build
 
+# Diagnostic: check build output
+RUN ls -la apps/api/dist
+
 # Deploy the api package to a separate directory for production
+# This should flatten the dependencies
 RUN pnpm --filter api --prod deploy /out
+
+# Diagnostic: check deploy output
+RUN ls -la /out
+RUN ls -la /out/node_modules || true
 
 FROM base AS runner
 WORKDIR /app
@@ -22,9 +30,10 @@ ENV NODE_ENV=production
 # Copy the deployed files from the builder stage
 COPY --from=builder /out ./
 
-# Ensure the database package and generated prisma client are available
-# (pnpm deploy handles workspace dependencies by copying them into node_modules)
+# Diagnostic: check runner structure
+RUN ls -la .
 
-EXPOSE 3001
+EXPOSE 8080
+ENV PORT=8080
 
-CMD ["node", "dist/main"]
+CMD ["node", "dist/main.js"]
