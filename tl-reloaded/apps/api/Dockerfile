@@ -11,21 +11,20 @@ RUN pnpm --filter @repo/db db:generate
 RUN pnpm --filter @repo/db build
 RUN pnpm --filter api build
 
+# Deploy the api package to a separate directory for production
+RUN pnpm --filter api --prod deploy /out
+
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nestjs
+# Copy the deployed files from the builder stage
+COPY --from=builder /out ./
 
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
-COPY --from=builder /app/packages/db ./packages/db
-
-USER nestjs
+# Ensure the database package and generated prisma client are available
+# (pnpm deploy handles workspace dependencies by copying them into node_modules)
 
 EXPOSE 3001
 
-CMD ["node", "apps/api/dist/main"]
+CMD ["node", "dist/main"]
