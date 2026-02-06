@@ -20,6 +20,8 @@ import { MessagingModule } from './messaging/messaging.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { CertificatesModule } from './certificates/certificates.module';
 import { WebinarsModule } from './webinars/webinars.module';
+import { StorageModule } from './storage/storage.module';
+import { ConfigModule } from './config/config.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { WebinarsModule } from './webinars/webinars.module';
     NotificationsModule,
     CertificatesModule,
     WebinarsModule,
+    StorageModule,
+    ConfigModule,
   ],
   controllers: [AppController],
   providers: [

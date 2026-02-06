@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { StorageService } from '../storage/storage.service';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -7,7 +9,10 @@ import { UserRole } from '@repo/db/types';
 @Controller('users')
 @UseGuards(JwtAuthGuard)
 export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+    constructor(
+        private readonly usersService: UsersService,
+        private readonly storageService: StorageService
+    ) { }
 
     @Get('profile')
     getProfile(@Request() req) {
@@ -17,6 +22,13 @@ export class UsersController {
     @Patch('profile')
     updateProfile(@Request() req, @Body() updateProfileDto: any) {
         return this.usersService.update(req.user.id, updateProfileDto);
+    }
+
+    @Post('avatar')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadAvatar(@Request() req, @UploadedFile() file: Express.Multer.File) {
+        const url = await this.storageService.uploadFile(file, 'avatars');
+        return this.usersService.update(req.user.id, { avatarId: url });
     }
 
     @Get('teachers')

@@ -12,6 +12,7 @@ export interface User {
   role: UserRole;
   schoolId?: string;
   classId?: string;
+  avatarId?: string;
 }
 
 export interface LoginCredentials {
@@ -135,7 +136,7 @@ class AuthClient {
     }
   }
 
-  private setUser(user: User): void {
+  setUser(user: User): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.userKey, JSON.stringify(user));
     }

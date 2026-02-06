@@ -11,6 +11,7 @@ interface AuthContextType {
   studentLogin: (credentials: StudentLoginCredentials) => Promise<User>;
   register: (credentials: RegisterCredentials) => Promise<User>;
   logout: () => void;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -82,6 +83,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
+  const updateUser = (updatedUser: User) => {
+    authClient.setUser(updatedUser);
+    setUser(updatedUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -92,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         studentLogin,
         register,
         logout,
+        updateUser,
       }}
     >
       {children}

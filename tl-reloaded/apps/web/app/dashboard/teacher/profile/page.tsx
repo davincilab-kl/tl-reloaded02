@@ -21,9 +21,43 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/providers/auth-provider';
 import { cn } from '@/lib/utils';
+import { uploadAvatar } from '@/lib/users';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useRef, useState } from 'react';
+import { authClient } from '@/lib/auth';
 
 export default function ProfilePage() {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        try {
+            const updatedProfile = await uploadAvatar(file);
+            // The API returns the updated user profile. We need to update our auth state.
+            // Since UserProfile from lib/users is slightly different from User in auth, 
+            // we map it carefully or just re-fetch profile.
+            if (user) {
+                updateUser({
+                    ...user,
+                    avatarId: updatedProfile.avatarId // Ensure this field exists in User interface
+                } as any);
+            }
+        } catch (err) {
+            console.error('Avatar upload failed:', err);
+            alert('Upload fehlgeschlagen. Bitte versuche es erneut.');
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     return (
         <motion.div
@@ -40,12 +74,35 @@ export default function ProfilePage() {
                 <CardContent className="px-12 pb-12 relative">
                     <div className="flex flex-col md:flex-row items-end gap-8 -mt-16">
                         <div className="relative group">
-                            <div className="w-40 h-40 rounded-[2.5rem] bg-white p-2 shadow-2xl">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            <div
+                                className={cn(
+                                    "w-40 h-40 rounded-[2.5rem] bg-white p-2 shadow-2xl cursor-pointer transition-transform hover:scale-105",
+                                    isUploading && "animate-pulse opacity-70"
+                                )}
+                                onClick={handleAvatarClick}
+                            >
                                 <div className="w-full h-full rounded-[2rem] bg-slate-100 flex items-center justify-center text-blue-600 font-black text-6xl shadow-inner relative overflow-hidden">
-                                    {user?.firstName?.[0]}
-                                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-all flex items-center justify-center cursor-pointer">
+                                    <Avatar className="w-full h-full rounded-[2rem]">
+                                        <AvatarImage src={(user as any)?.avatarId} className="object-cover" />
+                                        <AvatarFallback className="bg-slate-100 text-blue-600 font-black text-6xl">
+                                            {user?.firstName?.[0]}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-all flex items-center justify-center">
                                         <Camera className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
+                                    {isUploading && (
+                                        <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                                            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
