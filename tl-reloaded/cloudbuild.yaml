@@ -1,0 +1,51 @@
+steps:
+  # Build Web Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$SHORT_SHA', '-f', 'apps/web/Dockerfile', '.']
+
+  # Build API Image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$SHORT_SHA', '-f', 'apps/api/Dockerfile', '.']
+
+  # Push Images
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$SHORT_SHA']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$SHORT_SHA']
+
+  # Deploy Web to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'tl-web'
+      - '--image'
+      - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$SHORT_SHA'
+      - '--region'
+      - 'europe-west3'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+  # Deploy API to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'tl-api'
+      - '--image'
+      - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$SHORT_SHA'
+      - '--region'
+      - 'europe-west3'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+images:
+  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$SHORT_SHA'
+  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING
