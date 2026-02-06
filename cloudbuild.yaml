@@ -54,4 +54,4 @@ images:
   - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$SHORT_SHA'
 
 options:
-  logging: CLOUD_LOGGING
+  logging: CLOUD_LOGGING_ONLY
