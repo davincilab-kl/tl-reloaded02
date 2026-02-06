@@ -1,19 +1,19 @@
 steps:
   # Build Web Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:${_SHORT_SHA:-$SHORT_SHA}', '-f', 'tl-reloaded/apps/web/Dockerfile', 'tl-reloaded']
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$_SHORT_SHA', '-f', 'tl-reloaded/apps/web/Dockerfile', 'tl-reloaded']
     env: ['DOCKER_BUILDKIT=1']
 
   # Build API Image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:${_SHORT_SHA:-$SHORT_SHA}', '-f', 'tl-reloaded/apps/api/Dockerfile', 'tl-reloaded']
+    args: ['build', '-t', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$_SHORT_SHA', '-f', 'tl-reloaded/apps/api/Dockerfile', 'tl-reloaded']
     env: ['DOCKER_BUILDKIT=1']
 
   # Push Images
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:${_SHORT_SHA:-$SHORT_SHA}']
+    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$_SHORT_SHA']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:${_SHORT_SHA:-$SHORT_SHA}']
+    args: ['push', 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$_SHORT_SHA']
 
   # Deploy Web to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -22,8 +22,7 @@ steps:
       - 'run'
       - 'deploy'
       - 'tl-web'
-      - '--image'
-      - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:${_SHORT_SHA:-$SHORT_SHA}'
+      - '--image=europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$_SHORT_SHA'
       - '--region'
       - 'europe-west3'
       - '--platform'
@@ -39,8 +38,7 @@ steps:
       - 'run'
       - 'deploy'
       - 'tl-api'
-      - '--image'
-      - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:${_SHORT_SHA:-$SHORT_SHA}'
+      - '--image=europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$_SHORT_SHA'
       - '--region'
       - 'europe-west3'
       - '--platform'
@@ -52,8 +50,8 @@ steps:
       - '$PROJECT_ID:europe-west3:tl-reloaded-db'
 
 images:
-  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:${_SHORT_SHA:-$SHORT_SHA}'
-  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:${_SHORT_SHA:-$SHORT_SHA}'
+  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-web:$_SHORT_SHA'
+  - 'europe-west3-docker.pkg.dev/$PROJECT_ID/davincilab/tl-api:$_SHORT_SHA'
 
 options:
   logging: CLOUD_LOGGING_ONLY
