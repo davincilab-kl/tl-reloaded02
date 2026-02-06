@@ -7,6 +7,7 @@ FROM base AS builder
 WORKDIR /app
 COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm --filter @repo/db db:generate
 RUN pnpm --filter @repo/db build
 RUN pnpm --filter api build
 
