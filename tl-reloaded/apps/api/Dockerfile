@@ -4,14 +4,23 @@ WORKDIR /app
 
 # 1. Build stage
 FROM base AS builder
-# Copy everything in the monorepo
+# Invalidate cache for the following steps
+ARG BUILD_ID=force_rebuild_001
+ENV BUILD_ID=$BUILD_ID
+
 COPY . .
-# Install all dependencies
+RUN echo "Starting fresh install and build..."
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-# Build the database package and the API
+
+RUN echo "Generating Prisma client..."
 RUN pnpm --filter @repo/db db:generate
+RUN echo "Building @repo/db..."
 RUN pnpm --filter @repo/db build
+RUN echo "Building api..."
 RUN pnpm --filter api build
+
+# Diagnostic: Verify the generated client exists in the custom path
+RUN ls -la packages/db/src/generated/client || echo "ERROR: Prisma client not found in custom path"
 
 # 2. Runner stage
 FROM base AS runner
@@ -19,12 +28,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Copy EVERYTHING from builder to ensure all symlinks and workspace deps are intact
+# Copy EVERYTHING from builder
 COPY --from=builder /app /app
 
-# Expose the API port
 EXPOSE 8080
-
-# Run the API from its workspace directory
 WORKDIR /app/apps/api
 CMD ["node", "dist/main.js"]

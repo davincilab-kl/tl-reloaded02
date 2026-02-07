@@ -4,13 +4,19 @@ WORKDIR /app
 
 # 1. Build stage
 FROM base AS builder
-# Copy everything in the monorepo
+# Invalidate cache for the following steps
+ARG BUILD_ID=force_rebuild_001
+ENV BUILD_ID=$BUILD_ID
+
 COPY . .
-# Install all dependencies
+RUN echo "Starting fresh install and build..."
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-# Build everything (Next.js needs the full monorepo context)
+
+RUN echo "Generating Prisma client..."
 RUN pnpm --filter @repo/db db:generate
+RUN echo "Building @repo/db..."
 RUN pnpm --filter @repo/db build
+RUN echo "Building web..."
 RUN pnpm --filter web build
 
 # 2. Runner stage
@@ -19,12 +25,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy EVERYTHING from builder to ensure all symlinks and workspace deps are intact
+# Copy EVERYTHING from builder
 COPY --from=builder /app /app
 
-# Expose the Web port
 EXPOSE 3000
-
-# Run the Web app from its workspace directory
 WORKDIR /app/apps/web
 CMD ["pnpm", "start"]
