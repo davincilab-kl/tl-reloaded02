@@ -6,8 +6,11 @@ WORKDIR /app
 # 1. Build stage
 FROM base AS builder
 # Invalidate cache for the following steps
-ARG BUILD_ID=force_rebuild_002
+ARG BUILD_ID=force_rebuild_003
 ENV BUILD_ID=$BUILD_ID
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 COPY . .
 RUN echo "Starting fresh install and build..."

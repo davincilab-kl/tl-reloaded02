@@ -1,0 +1,13 @@
+.git
+.gitignore
+node_modules
+.next
+.turbo
+apps/**/node_modules
+packages/**/node_modules
+apps/**/.next
+apps/**/dist
+packages/**/dist
+*.tgz
+*.log
+.pnpm-store
