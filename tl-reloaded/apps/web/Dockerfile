@@ -1,11 +1,12 @@
 FROM node:20-slim AS base
+RUN apt-get update -y && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 WORKDIR /app
 
 # 1. Build stage
 FROM base AS builder
 # Invalidate cache for the following steps
-ARG BUILD_ID=force_rebuild_001
+ARG BUILD_ID=force_rebuild_002
 ENV BUILD_ID=$BUILD_ID
 
 COPY . .
