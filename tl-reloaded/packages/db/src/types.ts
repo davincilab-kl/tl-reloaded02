@@ -3,7 +3,7 @@
 export type {
   User,
   Prisma,
-} from '@prisma/client';
+} from './generated/client';
 
 // Enums need to be exported as values (not types) for runtime use (e.g., class-validator)
 export {
@@ -37,4 +37,4 @@ export {
   MessageType,
   NotificationType,
   RelatedType,
-} from '@prisma/client';
+} from './generated/client';
